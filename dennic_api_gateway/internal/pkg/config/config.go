@@ -1,10 +1,11 @@
 package config
 
 import (
-	"github.com/spf13/cast"
 	"os"
 	"strings"
 	"time"
+
+	"github.com/spf13/cast"
 )
 
 const (
@@ -19,6 +20,7 @@ type webAddress struct {
 
 type minio struct {
 	Endpoint  string
+	ImageURL  string
 	AccessKey string
 	SecretKey string
 }
@@ -147,7 +149,8 @@ func NewConfig() (*Config, error) {
 	config.Kafka.Topic.InvestmentPaymentTransaction = getEnv("KAFKA_TOPIC_INVESTMENT_PAYMENT_TRANSACTION", "investment.payment.transaction")
 
 	// model_minio configuration
-	config.MinioService.Endpoint = getEnv("MINIO_SERVICE_ENDPOINT", "https://minio.dennic.uz")
+	config.MinioService.ImageURL = getEnv("MINIO_SERVICE_ENDPOINT", "https://minio.dennic.uz")
+	config.MinioService.Endpoint = getEnv("MINIO_SERVICE_ENDPOINT", "minio:9000")
 	config.MinioService.AccessKey = getEnv("MINIO_SERVICE_ACCESS_KEY", "dennic")
 	config.MinioService.SecretKey = getEnv("MINIO_SERVICE_SECRET_KEY", "dennic_service")
 

@@ -41,7 +41,7 @@ func UploadToMinio(cfg *config.Config, objectName string, content []byte, bucket
 		return "", err
 	}
 
-	objectURL := fmt.Sprintf("%s/%s/%s", cfg.Minio.Endpoint, bucketName, objectName)
+	objectURL := fmt.Sprintf("%s/%s/%s", cfg.Minio.ImageURL, bucketName, objectName)
 
 	return objectURL, nil
 }
