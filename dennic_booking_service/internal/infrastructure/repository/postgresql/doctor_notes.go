@@ -146,11 +146,14 @@ func (r *DoctorNotes) GetAllDoctorNotes(ctx context.Context, req *doctor_notes.G
 		notes   doctor_notes.DoctorNotesType
 		upTime  sql.NullTime
 		delTime sql.NullTime
+		count int64
 	)
 
 	toSql := r.db.Sq.Builder.
 		Select(tableColumNotes()).
 		From(tableNameDoctorNotes)
+
+	countBuilder := r.db.Sq.Builder.Select("count(*)").From(tableNameDoctorNotes)
 
 	if req.Page >= 1 && req.Limit >= 1 {
 		toSql = toSql.
@@ -167,6 +170,17 @@ func (r *DoctorNotes) GetAllDoctorNotes(ctx context.Context, req *doctor_notes.G
 		toSql = toSql.Where(r.db.Sq.Equal("deleted_at", nil))
 	}
 	toSqls, args, err := toSql.ToSql()
+
+	if err != nil {
+		return nil, err
+	}
+
+	queryCount, _, err := countBuilder.ToSql()
+	if err != nil {
+		return nil, err
+	}
+
+	err = r.db.QueryRow(ctx, queryCount).Scan(&count)
 
 	if err != nil {
 		return nil, err
@@ -204,6 +218,8 @@ func (r *DoctorNotes) GetAllDoctorNotes(ctx context.Context, req *doctor_notes.G
 		notes.DoctorNotes = append(notes.DoctorNotes, &note)
 
 	}
+
+	notes.Count = count
 	return &notes, nil
 }
 
