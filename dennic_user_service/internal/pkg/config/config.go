@@ -72,7 +72,7 @@ func New() *Config {
 	c.Kafka.Topic.InvestorCreate = getEnv("KAFKA_TOPIC_INVESTOR_CREATE", "investor.created")
 
 	// Minio
-	c.MinioService.Endpoint = getEnv("MINIO_SERVICE_ENDPOINT", "https://minioui.dennic.uz")
+	c.MinioService.Endpoint = getEnv("MINIO_SERVICE_ENDPOINT", "https://minio.dennic.uz")
 	c.MinioService.Bucket.User = getEnv("MINIO_SERVICE_BUCKET_USER", "user")
 
 	return &c

@@ -75,7 +75,7 @@ func New() *Config {
 	config.Kafka.Topic.Healthcare = getEnv("KAFKA_TOPIC_HEALTHCARE_CREATE", "user.created")
 
 	// Minio
-	config.MinioService.Endpoint = getEnv("MINIO_SERVICE_ENDPOINT", "https://minioui.dennic.uz")
+	config.MinioService.Endpoint = getEnv("MINIO_SERVICE_ENDPOINT", "https://minio.dennic.uz")
 	config.MinioService.Bucket.Department = getEnv("MINIO_SERVICE_BUCKET_DEPARTMENT", "department")
 	config.MinioService.Bucket.Doctor = getEnv("MINIO_SERVICE_BUCKET_DOCTOR", "doctor")
 	config.MinioService.Bucket.Reasons = getEnv("MINIO_SERVICE_BUCKET_REASONS", "reasons")
