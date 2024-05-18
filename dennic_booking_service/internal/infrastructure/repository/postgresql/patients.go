@@ -176,11 +176,14 @@ func (r *BookingPatients) GetAllPatiens(ctx context.Context, req *patients.GetAl
 		patientss patients.PatientsType
 		upTime    sql.NullTime
 		delTime   sql.NullTime
+		count     int64
 	)
 
 	toSql := r.db.Sq.Builder.
 		Select(tableColumPatients()).
 		From(tableNamePatients)
+
+	countBuilder := r.db.Sq.Builder.Select("count(*)").From(tableNamePatients)
 
 	if req.Page >= 1 && req.Limit >= 1 {
 		toSql = toSql.
@@ -198,6 +201,16 @@ func (r *BookingPatients) GetAllPatiens(ctx context.Context, req *patients.GetAl
 	}
 	toSqls, args, err := toSql.ToSql()
 
+	if err != nil {
+		return nil, err
+	}
+
+	queryCount, _, err := countBuilder.ToSql()
+	if err != nil {
+		return nil, err
+	}
+
+	err = r.db.QueryRow(ctx, queryCount).Scan(&count)
 	if err != nil {
 		return nil, err
 	}
@@ -229,10 +242,10 @@ func (r *BookingPatients) GetAllPatiens(ctx context.Context, req *patients.GetAl
 			return nil, err
 		}
 
-		patientss.Count += 1
-
 		patientss.Patients = append(patientss.Patients, &res)
 	}
+
+	patientss.Count = count
 	return &patientss, nil
 }
 

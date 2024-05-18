@@ -186,11 +186,14 @@ func (r *BookingAppointment) GetAllAppointment(ctx context.Context, req *appoint
 		response appointment.AppointmentsType
 		upAt     sql.NullTime
 		delAt    sql.NullTime
+		count    int64
 	)
 
 	toSql := r.db.Sq.Builder.
 		Select(tableColums()).
 		From(tableNameAppointment)
+
+	countBuilder := r.db.Sq.Builder.Select("count(*)").From(tableNameAppointment)
 
 	if req.Page >= 1 && req.Limit >= 1 {
 		toSql = toSql.
@@ -213,6 +216,18 @@ func (r *BookingAppointment) GetAllAppointment(ctx context.Context, req *appoint
 	if err != nil {
 		return nil, err
 	}
+
+	queryCount, _, err := countBuilder.ToSql()
+	if err != nil {
+		return nil, err
+	}
+
+	err = r.db.QueryRow(ctx, queryCount).Scan(&count)
+
+	if err != nil {
+		return nil, err
+	}
+
 
 	rows, err := r.db.Query(ctx, toSqls, args...)
 
@@ -252,10 +267,10 @@ func (r *BookingAppointment) GetAllAppointment(ctx context.Context, req *appoint
 			res.DeletedAt = delAt.Time
 		}
 
-		response.Count += 1
-
 		response.Appointments = append(response.Appointments, &res)
 	}
+
+	response.Count = count
 	return &response, nil
 }
 

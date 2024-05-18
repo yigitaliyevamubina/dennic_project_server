@@ -203,7 +203,6 @@ func (r *DoctorNotes) GetAllDoctorNotes(ctx context.Context, req *doctor_notes.G
 
 		notes.DoctorNotes = append(notes.DoctorNotes, &note)
 
-		notes.Count += 1
 	}
 	return &notes, nil
 }

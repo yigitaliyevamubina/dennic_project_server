@@ -157,11 +157,14 @@ func (r *DoctorAvailability) GetAllDoctorAvailability(ctx context.Context, req *
 		docAvails doctor_availability.DoctorAvailabilityType
 		upAt      sql.NullTime
 		delAt     sql.NullTime
+		count     int64
 	)
 
 	toSql := r.db.Sq.Builder.
 		Select(tableColumDoctorAvailability()).
 		From(tableNameDoctorAvailability)
+
+	countBuilder := r.db.Sq.Builder.Select("count(*)").From(tableNameDoctorAvailability)
 
 	if req.Page >= 1 && req.Limit >= 1 {
 		toSql = toSql.
@@ -178,6 +181,17 @@ func (r *DoctorAvailability) GetAllDoctorAvailability(ctx context.Context, req *
 		toSql = toSql.Where(r.db.Sq.Equal("deleted_at", nil))
 	}
 	toSqls, args, err := toSql.ToSql()
+
+	if err != nil {
+		return nil, err
+	}
+
+	queryCount, _, err := countBuilder.ToSql()
+	if err != nil {
+		return nil, err
+	}
+
+	err = r.db.QueryRow(ctx, queryCount).Scan(&count)
 
 	if err != nil {
 		return nil, err
@@ -215,9 +229,8 @@ func (r *DoctorAvailability) GetAllDoctorAvailability(ctx context.Context, req *
 		}
 
 		docAvails.DoctorAvailabilitys = append(docAvails.DoctorAvailabilitys, &docAvail)
-
-		docAvails.Count += 1
 	}
+	docAvails.Count = count
 	return &docAvails, nil
 }
 
