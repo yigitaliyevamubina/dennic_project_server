@@ -154,6 +154,8 @@ func (h *HandlerV1) ListDoctorNotes(c *gin.Context) {
 		doctorNotesRes.DoctorNotes = append(doctorNotesRes.DoctorNotes, &doctorNote)
 	}
 
+	doctorNotesRes.Count = doctorNotes.Count
+
 	c.JSON(http.StatusOK, doctorNotesRes)
 }
 
