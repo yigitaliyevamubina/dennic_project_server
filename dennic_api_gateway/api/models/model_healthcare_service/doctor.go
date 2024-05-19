@@ -43,8 +43,8 @@ type DoctorUpdateReq struct {
 }
 
 type DoctorSpec struct {
-	Id   string
-	Name string
+	Id   string `json:"id"`
+	Name string `json:"name"`
 }
 
 type DoctorRes struct {

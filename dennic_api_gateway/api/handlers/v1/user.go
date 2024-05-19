@@ -247,25 +247,20 @@ func (h *HandlerV1) UpdateRefreshToken(c *gin.Context) {
 // @Tags User
 // @Accept json
 // @Produce json
-// @Param Field query string true "Field"
-// @Param Value query string true "Value"
+// @Param id query string true "id"
 // @Success 200 {object} model_user_service.CheckUserFieldResp
 // @Failure 400 {object} model_common.StandardErrorModel
 // @Failure 500 {object} model_common.StandardErrorModel
 // @Router /v1/user [DELETE]
 func (h *HandlerV1) DeleteUser(c *gin.Context) {
-	var jspbMarshal protojson.MarshalOptions
-	jspbMarshal.UseProtoNames = true
-
-	field := c.Query("Field")
-	value := c.Query("Value")
+	value := c.Query("id")
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*time.Duration(h.cfg.Context.Timeout))
 	defer cancel()
 
 	response, err := h.serviceManager.UserService().UserService().Delete(
 		ctx, &pb.DeleteUserReq{
-			Field:    field,
+			Field:    "id",
 			Value:    value,
 			IsActive: false,
 		})

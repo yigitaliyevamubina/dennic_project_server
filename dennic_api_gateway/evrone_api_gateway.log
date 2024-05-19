@@ -1,0 +1,190 @@
+2024-05-19T17:13:58.254+0500	INFO	app/main.go:30	Listen: 	{"address": "localhost:9050"}
+2024-05-19T17:15:12.989+0500	INFO	app/main.go:41	api gateway service stops
+2024-05-19T17:15:12.992+0500	ERROR	app/main.go:32	app run	{"error": "http: Server closed"}
+main.main.func1
+	/home/ali/Goland/dennic_project_server/dennic_api_gateway/cmd/app/main.go:32
+2024-05-19T17:16:15.581+0500	INFO	app/main.go:30	Listen: 	{"address": "localhost:9050"}
+2024-05-19T17:16:46.355+0500	WARN	regtool/handle_error.go:21	rpc error: code = Unknown desc = no rows in result set
+dennic_admin_api_gateway/api/handlers/regtool.HandleError
+	/home/ali/Goland/dennic_project_server/dennic_api_gateway/api/handlers/regtool/handle_error.go:21
+dennic_admin_api_gateway/api/handlers/v1.(*HandlerV1).GetBookedAppointment
+	/home/ali/Goland/dennic_project_server/dennic_api_gateway/api/handlers/v1/booked_appointment.go:106
+github.com/gin-gonic/gin.(*Context).Next
+	/home/ali/go/pkg/mod/github.com/gin-gonic/gin@v1.9.1/context.go:174
+dennic_admin_api_gateway/api.NewRoute.NewAuthorizer.func2
+	/home/ali/Goland/dennic_project_server/dennic_api_gateway/api/middleware/casbin/casbin.go:32
+github.com/gin-gonic/gin.(*Context).Next
+	/home/ali/go/pkg/mod/github.com/gin-gonic/gin@v1.9.1/context.go:174
+dennic_admin_api_gateway/api.NewRoute.GinTracing.func1
+	/home/ali/Goland/dennic_project_server/dennic_api_gateway/api/middleware/tracing.go:31
+github.com/gin-gonic/gin.(*Context).Next
+	/home/ali/go/pkg/mod/github.com/gin-gonic/gin@v1.9.1/context.go:174
+github.com/gin-gonic/gin.CustomRecoveryWithWriter.func1
+	/home/ali/go/pkg/mod/github.com/gin-gonic/gin@v1.9.1/recovery.go:102
+github.com/gin-gonic/gin.(*Context).Next
+	/home/ali/go/pkg/mod/github.com/gin-gonic/gin@v1.9.1/context.go:174
+github.com/gin-gonic/gin.LoggerWithConfig.func1
+	/home/ali/go/pkg/mod/github.com/gin-gonic/gin@v1.9.1/logger.go:240
+github.com/gin-gonic/gin.(*Context).Next
+	/home/ali/go/pkg/mod/github.com/gin-gonic/gin@v1.9.1/context.go:174
+github.com/gin-gonic/gin.(*Engine).handleHTTPRequest
+	/home/ali/go/pkg/mod/github.com/gin-gonic/gin@v1.9.1/gin.go:620
+github.com/gin-gonic/gin.(*Engine).ServeHTTP
+	/home/ali/go/pkg/mod/github.com/gin-gonic/gin@v1.9.1/gin.go:576
+net/http.serverHandler.ServeHTTP
+	/usr/lib/go/src/net/http/server.go:3137
+net/http.(*conn).serve
+	/usr/lib/go/src/net/http/server.go:2039
+2024-05-19T17:17:16.741+0500	INFO	app/main.go:41	api gateway service stops
+2024-05-19T17:17:16.742+0500	ERROR	app/main.go:32	app run	{"error": "http: Server closed"}
+main.main.func1
+	/home/ali/Goland/dennic_project_server/dennic_api_gateway/cmd/app/main.go:32
+2024-05-19T17:17:21.427+0500	INFO	app/main.go:30	Listen: 	{"address": "localhost:9050"}
+2024-05-19T17:17:27.580+0500	INFO	app/main.go:41	api gateway service stops
+2024-05-19T17:17:27.581+0500	ERROR	app/main.go:32	app run	{"error": "http: Server closed"}
+main.main.func1
+	/home/ali/Goland/dennic_project_server/dennic_api_gateway/cmd/app/main.go:32
+2024-05-19T17:18:00.315+0500	INFO	app/main.go:30	Listen: 	{"address": "localhost:9050"}
+2024-05-19T17:18:24.361+0500	INFO	app/main.go:41	api gateway service stops
+2024-05-19T17:18:24.361+0500	ERROR	app/main.go:32	app run	{"error": "http: Server closed"}
+main.main.func1
+	/home/ali/Goland/dennic_project_server/dennic_api_gateway/cmd/app/main.go:32
+2024-05-19T17:19:09.518+0500	INFO	app/main.go:30	Listen: 	{"address": "localhost:9050"}
+2024-05-19T17:30:50.058+0500	WARN	regtool/handle_error.go:21	rpc error: code = Unknown desc = ERROR: invalid input syntax for type uuid: "" (SQLSTATE 22P02)
+dennic_admin_api_gateway/api/handlers/regtool.HandleError
+	/home/ali/Goland/dennic_project_server/dennic_api_gateway/api/handlers/regtool/handle_error.go:21
+dennic_admin_api_gateway/api/handlers/v1.(*HandlerV1).UpdateBookedAppointment
+	/home/ali/Goland/dennic_project_server/dennic_api_gateway/api/handlers/v1/booked_appointment.go:240
+github.com/gin-gonic/gin.(*Context).Next
+	/home/ali/go/pkg/mod/github.com/gin-gonic/gin@v1.9.1/context.go:174
+dennic_admin_api_gateway/api.NewRoute.NewAuthorizer.func2
+	/home/ali/Goland/dennic_project_server/dennic_api_gateway/api/middleware/casbin/casbin.go:32
+github.com/gin-gonic/gin.(*Context).Next
+	/home/ali/go/pkg/mod/github.com/gin-gonic/gin@v1.9.1/context.go:174
+dennic_admin_api_gateway/api.NewRoute.GinTracing.func1
+	/home/ali/Goland/dennic_project_server/dennic_api_gateway/api/middleware/tracing.go:31
+github.com/gin-gonic/gin.(*Context).Next
+	/home/ali/go/pkg/mod/github.com/gin-gonic/gin@v1.9.1/context.go:174
+github.com/gin-gonic/gin.CustomRecoveryWithWriter.func1
+	/home/ali/go/pkg/mod/github.com/gin-gonic/gin@v1.9.1/recovery.go:102
+github.com/gin-gonic/gin.(*Context).Next
+	/home/ali/go/pkg/mod/github.com/gin-gonic/gin@v1.9.1/context.go:174
+github.com/gin-gonic/gin.LoggerWithConfig.func1
+	/home/ali/go/pkg/mod/github.com/gin-gonic/gin@v1.9.1/logger.go:240
+github.com/gin-gonic/gin.(*Context).Next
+	/home/ali/go/pkg/mod/github.com/gin-gonic/gin@v1.9.1/context.go:174
+github.com/gin-gonic/gin.(*Engine).handleHTTPRequest
+	/home/ali/go/pkg/mod/github.com/gin-gonic/gin@v1.9.1/gin.go:620
+github.com/gin-gonic/gin.(*Engine).ServeHTTP
+	/home/ali/go/pkg/mod/github.com/gin-gonic/gin@v1.9.1/gin.go:576
+net/http.serverHandler.ServeHTTP
+	/usr/lib/go/src/net/http/server.go:3137
+net/http.(*conn).serve
+	/usr/lib/go/src/net/http/server.go:2039
+2024-05-19T17:32:48.602+0500	WARN	regtool/handle_error.go:21	rpc error: code = Unknown desc = ERROR: invalid input syntax for type uuid: "" (SQLSTATE 22P02)
+dennic_admin_api_gateway/api/handlers/regtool.HandleError
+	/home/ali/Goland/dennic_project_server/dennic_api_gateway/api/handlers/regtool/handle_error.go:21
+dennic_admin_api_gateway/api/handlers/v1.(*HandlerV1).UpdateBookedAppointment
+	/home/ali/Goland/dennic_project_server/dennic_api_gateway/api/handlers/v1/booked_appointment.go:240
+github.com/gin-gonic/gin.(*Context).Next
+	/home/ali/go/pkg/mod/github.com/gin-gonic/gin@v1.9.1/context.go:174
+dennic_admin_api_gateway/api.NewRoute.NewAuthorizer.func2
+	/home/ali/Goland/dennic_project_server/dennic_api_gateway/api/middleware/casbin/casbin.go:32
+github.com/gin-gonic/gin.(*Context).Next
+	/home/ali/go/pkg/mod/github.com/gin-gonic/gin@v1.9.1/context.go:174
+dennic_admin_api_gateway/api.NewRoute.GinTracing.func1
+	/home/ali/Goland/dennic_project_server/dennic_api_gateway/api/middleware/tracing.go:31
+github.com/gin-gonic/gin.(*Context).Next
+	/home/ali/go/pkg/mod/github.com/gin-gonic/gin@v1.9.1/context.go:174
+github.com/gin-gonic/gin.CustomRecoveryWithWriter.func1
+	/home/ali/go/pkg/mod/github.com/gin-gonic/gin@v1.9.1/recovery.go:102
+github.com/gin-gonic/gin.(*Context).Next
+	/home/ali/go/pkg/mod/github.com/gin-gonic/gin@v1.9.1/context.go:174
+github.com/gin-gonic/gin.LoggerWithConfig.func1
+	/home/ali/go/pkg/mod/github.com/gin-gonic/gin@v1.9.1/logger.go:240
+github.com/gin-gonic/gin.(*Context).Next
+	/home/ali/go/pkg/mod/github.com/gin-gonic/gin@v1.9.1/context.go:174
+github.com/gin-gonic/gin.(*Engine).handleHTTPRequest
+	/home/ali/go/pkg/mod/github.com/gin-gonic/gin@v1.9.1/gin.go:620
+github.com/gin-gonic/gin.(*Engine).ServeHTTP
+	/home/ali/go/pkg/mod/github.com/gin-gonic/gin@v1.9.1/gin.go:576
+net/http.serverHandler.ServeHTTP
+	/usr/lib/go/src/net/http/server.go:3137
+net/http.(*conn).serve
+	/usr/lib/go/src/net/http/server.go:2039
+2024-05-19T17:33:17.131+0500	WARN	regtool/handle_error.go:21	rpc error: code = Unknown desc = ERROR: invalid input syntax for type uuid: "" (SQLSTATE 22P02)
+dennic_admin_api_gateway/api/handlers/regtool.HandleError
+	/home/ali/Goland/dennic_project_server/dennic_api_gateway/api/handlers/regtool/handle_error.go:21
+dennic_admin_api_gateway/api/handlers/v1.(*HandlerV1).UpdateBookedAppointment
+	/home/ali/Goland/dennic_project_server/dennic_api_gateway/api/handlers/v1/booked_appointment.go:240
+github.com/gin-gonic/gin.(*Context).Next
+	/home/ali/go/pkg/mod/github.com/gin-gonic/gin@v1.9.1/context.go:174
+dennic_admin_api_gateway/api.NewRoute.NewAuthorizer.func2
+	/home/ali/Goland/dennic_project_server/dennic_api_gateway/api/middleware/casbin/casbin.go:32
+github.com/gin-gonic/gin.(*Context).Next
+	/home/ali/go/pkg/mod/github.com/gin-gonic/gin@v1.9.1/context.go:174
+dennic_admin_api_gateway/api.NewRoute.GinTracing.func1
+	/home/ali/Goland/dennic_project_server/dennic_api_gateway/api/middleware/tracing.go:31
+github.com/gin-gonic/gin.(*Context).Next
+	/home/ali/go/pkg/mod/github.com/gin-gonic/gin@v1.9.1/context.go:174
+github.com/gin-gonic/gin.CustomRecoveryWithWriter.func1
+	/home/ali/go/pkg/mod/github.com/gin-gonic/gin@v1.9.1/recovery.go:102
+github.com/gin-gonic/gin.(*Context).Next
+	/home/ali/go/pkg/mod/github.com/gin-gonic/gin@v1.9.1/context.go:174
+github.com/gin-gonic/gin.LoggerWithConfig.func1
+	/home/ali/go/pkg/mod/github.com/gin-gonic/gin@v1.9.1/logger.go:240
+github.com/gin-gonic/gin.(*Context).Next
+	/home/ali/go/pkg/mod/github.com/gin-gonic/gin@v1.9.1/context.go:174
+github.com/gin-gonic/gin.(*Engine).handleHTTPRequest
+	/home/ali/go/pkg/mod/github.com/gin-gonic/gin@v1.9.1/gin.go:620
+github.com/gin-gonic/gin.(*Engine).ServeHTTP
+	/home/ali/go/pkg/mod/github.com/gin-gonic/gin@v1.9.1/gin.go:576
+net/http.serverHandler.ServeHTTP
+	/usr/lib/go/src/net/http/server.go:3137
+net/http.(*conn).serve
+	/usr/lib/go/src/net/http/server.go:2039
+2024-05-19T17:33:46.754+0500	INFO	app/main.go:41	api gateway service stops
+2024-05-19T17:33:46.755+0500	ERROR	app/main.go:32	app run	{"error": "http: Server closed"}
+main.main.func1
+	/home/ali/Goland/dennic_project_server/dennic_api_gateway/cmd/app/main.go:32
+2024-05-19T17:35:15.398+0500	INFO	app/main.go:30	Listen: 	{"address": "localhost:9050"}
+2024-05-19T17:35:18.003+0500	WARN	regtool/handle_error.go:21	rpc error: code = Unknown desc = ERROR: invalid input syntax for type uuid: "" (SQLSTATE 22P02)
+dennic_admin_api_gateway/api/handlers/regtool.HandleError
+	/home/ali/Goland/dennic_project_server/dennic_api_gateway/api/handlers/regtool/handle_error.go:21
+dennic_admin_api_gateway/api/handlers/v1.(*HandlerV1).UpdateBookedAppointment
+	/home/ali/Goland/dennic_project_server/dennic_api_gateway/api/handlers/v1/booked_appointment.go:241
+github.com/gin-gonic/gin.(*Context).Next
+	/home/ali/go/pkg/mod/github.com/gin-gonic/gin@v1.9.1/context.go:174
+dennic_admin_api_gateway/api.NewRoute.NewAuthorizer.func2
+	/home/ali/Goland/dennic_project_server/dennic_api_gateway/api/middleware/casbin/casbin.go:32
+github.com/gin-gonic/gin.(*Context).Next
+	/home/ali/go/pkg/mod/github.com/gin-gonic/gin@v1.9.1/context.go:174
+dennic_admin_api_gateway/api.NewRoute.GinTracing.func1
+	/home/ali/Goland/dennic_project_server/dennic_api_gateway/api/middleware/tracing.go:31
+github.com/gin-gonic/gin.(*Context).Next
+	/home/ali/go/pkg/mod/github.com/gin-gonic/gin@v1.9.1/context.go:174
+github.com/gin-gonic/gin.CustomRecoveryWithWriter.func1
+	/home/ali/go/pkg/mod/github.com/gin-gonic/gin@v1.9.1/recovery.go:102
+github.com/gin-gonic/gin.(*Context).Next
+	/home/ali/go/pkg/mod/github.com/gin-gonic/gin@v1.9.1/context.go:174
+github.com/gin-gonic/gin.LoggerWithConfig.func1
+	/home/ali/go/pkg/mod/github.com/gin-gonic/gin@v1.9.1/logger.go:240
+github.com/gin-gonic/gin.(*Context).Next
+	/home/ali/go/pkg/mod/github.com/gin-gonic/gin@v1.9.1/context.go:174
+github.com/gin-gonic/gin.(*Engine).handleHTTPRequest
+	/home/ali/go/pkg/mod/github.com/gin-gonic/gin@v1.9.1/gin.go:620
+github.com/gin-gonic/gin.(*Engine).ServeHTTP
+	/home/ali/go/pkg/mod/github.com/gin-gonic/gin@v1.9.1/gin.go:576
+net/http.serverHandler.ServeHTTP
+	/usr/lib/go/src/net/http/server.go:3137
+net/http.(*conn).serve
+	/usr/lib/go/src/net/http/server.go:2039
+2024-05-19T17:39:40.711+0500	INFO	app/main.go:41	api gateway service stops
+2024-05-19T17:39:40.712+0500	ERROR	app/main.go:32	app run	{"error": "http: Server closed"}
+main.main.func1
+	/home/ali/Goland/dennic_project_server/dennic_api_gateway/cmd/app/main.go:32
+2024-05-19T17:39:45.915+0500	INFO	app/main.go:30	Listen: 	{"address": "localhost:9050"}
+2024-05-19T19:42:54.138+0500	INFO	app/main.go:41	api gateway service stops
+2024-05-19T19:42:54.150+0500	ERROR	app/main.go:32	app run	{"error": "http: Server closed"}
+main.main.func1
+	/home/ali/Goland/dennic_project_server/dennic_api_gateway/cmd/app/main.go:32

@@ -1,13 +1,14 @@
 package repo
 
 import (
-	"booking_service/internal/entity/doctor_availability"
-	"booking_service/internal/pkg/otlp"
-	"booking_service/internal/pkg/postgres"
 	"context"
 	"database/sql"
 	"fmt"
 	"time"
+
+	"booking_service/internal/entity/doctor_availability"
+	"booking_service/internal/pkg/otlp"
+	"booking_service/internal/pkg/postgres"
 )
 
 const (
@@ -39,8 +40,15 @@ func tableColumDoctorAvailability() string {
 			deleted_at`
 }
 
-func (r *DoctorAvailability) CreateDoctorAvailability(ctx context.Context, req *doctor_availability.CreateDoctorAvailability) (*doctor_availability.DoctorAvailability, error) {
-	ctx, span := otlp.Start(ctx, serviceNameDoctorAvailability, spanNameDoctorAvailabilityRepo+"Create")
+func (r *DoctorAvailability) CreateDoctorAvailability(
+	ctx context.Context,
+	req *doctor_availability.CreateDoctorAvailability,
+) (*doctor_availability.DoctorAvailability, error) {
+	ctx, span := otlp.Start(
+		ctx,
+		serviceNameDoctorAvailability,
+		spanNameDoctorAvailabilityRepo+"Create",
+	)
 	defer span.End()
 
 	var (
@@ -67,7 +75,6 @@ func (r *DoctorAvailability) CreateDoctorAvailability(ctx context.Context, req *
 		).
 		Suffix(fmt.Sprintf("RETURNING %s", tableColumDoctorAvailability())).
 		ToSql()
-
 	if err != nil {
 		return nil, err
 	}
@@ -98,8 +105,15 @@ func (r *DoctorAvailability) CreateDoctorAvailability(ctx context.Context, req *
 	return &docAvail, nil
 }
 
-func (r *DoctorAvailability) GetDoctorAvailability(ctx context.Context, req *doctor_availability.FieldValueReq) (*doctor_availability.DoctorAvailability, error) {
-	ctx, span := otlp.Start(ctx, serviceNameDoctorAvailability, spanNameDoctorAvailabilityRepo+"Get")
+func (r *DoctorAvailability) GetDoctorAvailability(
+	ctx context.Context,
+	req *doctor_availability.FieldValueReq,
+) (*doctor_availability.DoctorAvailability, error) {
+	ctx, span := otlp.Start(
+		ctx,
+		serviceNameDoctorAvailability,
+		spanNameDoctorAvailabilityRepo+"Get",
+	)
 	defer span.End()
 
 	var (
@@ -118,7 +132,6 @@ func (r *DoctorAvailability) GetDoctorAvailability(ctx context.Context, req *doc
 	}
 
 	toSqls, args, err := toSql.ToSql()
-
 	if err != nil {
 		return nil, err
 	}
@@ -149,8 +162,15 @@ func (r *DoctorAvailability) GetDoctorAvailability(ctx context.Context, req *doc
 	return &docAvail, nil
 }
 
-func (r *DoctorAvailability) GetAllDoctorAvailability(ctx context.Context, req *doctor_availability.GetAllReq) (*doctor_availability.DoctorAvailabilityType, error) {
-	ctx, span := otlp.Start(ctx, serviceNameDoctorAvailability, spanNameDoctorAvailabilityRepo+"List")
+func (r *DoctorAvailability) GetAllDoctorAvailability(
+	ctx context.Context,
+	req *doctor_availability.GetAllReq,
+) (*doctor_availability.DoctorAvailabilityType, error) {
+	ctx, span := otlp.Start(
+		ctx,
+		serviceNameDoctorAvailability,
+		spanNameDoctorAvailabilityRepo+"List",
+	)
 	defer span.End()
 
 	var (
@@ -181,7 +201,6 @@ func (r *DoctorAvailability) GetAllDoctorAvailability(ctx context.Context, req *
 		toSql = toSql.Where(r.db.Sq.Equal("deleted_at", nil))
 	}
 	toSqls, args, err := toSql.ToSql()
-
 	if err != nil {
 		return nil, err
 	}
@@ -192,13 +211,11 @@ func (r *DoctorAvailability) GetAllDoctorAvailability(ctx context.Context, req *
 	}
 
 	err = r.db.QueryRow(ctx, queryCount).Scan(&count)
-
 	if err != nil {
 		return nil, err
 	}
 
 	rows, err := r.db.Query(ctx, toSqls, args...)
-
 	if err != nil {
 		return nil, err
 	}
@@ -234,8 +251,15 @@ func (r *DoctorAvailability) GetAllDoctorAvailability(ctx context.Context, req *
 	return &docAvails, nil
 }
 
-func (r *DoctorAvailability) UpdateDoctorAvailability(ctx context.Context, req *doctor_availability.UpdateDoctorAvailability) (*doctor_availability.DoctorAvailability, error) {
-	ctx, span := otlp.Start(ctx, serviceNameDoctorAvailability, spanNameDoctorAvailabilityRepo+"Update")
+func (r *DoctorAvailability) UpdateDoctorAvailability(
+	ctx context.Context,
+	req *doctor_availability.UpdateDoctorAvailability,
+) (*doctor_availability.DoctorAvailability, error) {
+	ctx, span := otlp.Start(
+		ctx,
+		serviceNameDoctorAvailability,
+		spanNameDoctorAvailabilityRepo+"Update",
+	)
 	defer span.End()
 
 	var (
@@ -258,7 +282,6 @@ func (r *DoctorAvailability) UpdateDoctorAvailability(ctx context.Context, req *
 		Where(r.db.Sq.Equal(req.Field, req.Value)).
 		Suffix(fmt.Sprintf("RETURNING %s", tableColumDoctorAvailability())).
 		ToSql()
-
 	if err != nil {
 		return &doctor_availability.DoctorAvailability{}, err
 	}
@@ -289,8 +312,15 @@ func (r *DoctorAvailability) UpdateDoctorAvailability(ctx context.Context, req *
 	return &docAvail, nil
 }
 
-func (r *DoctorAvailability) DeleteDoctorAvailability(ctx context.Context, req *doctor_availability.FieldValueReq) (*doctor_availability.StatusRes, error) {
-	ctx, span := otlp.Start(ctx, serviceNameDoctorAvailability, spanNameDoctorAvailabilityRepo+"Delete")
+func (r *DoctorAvailability) DeleteDoctorAvailability(
+	ctx context.Context,
+	req *doctor_availability.FieldValueReq,
+) (*doctor_availability.StatusRes, error) {
+	ctx, span := otlp.Start(
+		ctx,
+		serviceNameDoctorAvailability,
+		spanNameDoctorAvailabilityRepo+"Delete",
+	)
 	defer span.End()
 
 	if !req.DeleteStatus {
@@ -306,28 +336,32 @@ func (r *DoctorAvailability) DeleteDoctorAvailability(ctx context.Context, req *
 			return &doctor_availability.StatusRes{Status: false}, err
 		}
 
-		_, err = r.db.Exec(ctx, toSql, args...)
-
+		resp, err := r.db.Exec(ctx, toSql, args...)
 		if err != nil {
 			return &doctor_availability.StatusRes{Status: false}, err
 		}
-		return &doctor_availability.StatusRes{Status: true}, nil
+		if resp.RowsAffected() > 0 {
+			return &doctor_availability.StatusRes{Status: true}, nil
+		}
+		return &doctor_availability.StatusRes{Status: false}, nil
 
 	} else {
 		toSql, args, err := r.db.Sq.Builder.
 			Delete(tableNameDoctorAvailability).
 			Where(r.db.Sq.Equal(req.Field, req.Value)).
 			ToSql()
-
 		if err != nil {
 			return &doctor_availability.StatusRes{Status: false}, err
 		}
 
-		_, err = r.db.Exec(ctx, toSql, args...)
-
+		resp, err := r.db.Exec(ctx, toSql, args...)
 		if err != nil {
 			return &doctor_availability.StatusRes{Status: false}, err
 		}
-		return &doctor_availability.StatusRes{Status: true}, nil
+
+		if resp.RowsAffected() > 0 {
+			return &doctor_availability.StatusRes{Status: true}, nil
+		}
+		return &doctor_availability.StatusRes{Status: false}, nil
 	}
 }

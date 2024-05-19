@@ -2,6 +2,13 @@
 export
 
 CURRENT_DIR=$(shell pwd)
+
+# run service
+.PHONY: run
+run:
+	go run ${CMD_DIR}/app/main.go
+
+
 APP=evrone_api_gateway
 CMD_DIR=./cmd
 SERVER_HOST = localhost:
@@ -27,7 +34,7 @@ OTLP_COLLECTOR_HOST = 0.0.0.0:
 MINIO_SERVICE_ENDPOINT = dennic.uz:9000
 
 POSTGRES_USER = postgres
-POSTGRES_PASSWORD = mubina2007
+POSTGRES_PASSWORD = 20030505
 POSTGRES_HOST = localhost
 POSTGRES_PORT = 5432
 POSTGRES_DATABASE = dennic
@@ -73,10 +80,6 @@ build:
 build-linux:
 	CGO_ENABLED=0 GOARCH="amd64" GOOS=linux go build -ldflags="-s -w" -o ./bin/${APP} ${CMD_DIR}/app/main.go
 
-# run service
-.PHONY: run
-run:
-	go run ${CMD_DIR}/app/main.go
 
 # proto
 .PHONY: proto-gen

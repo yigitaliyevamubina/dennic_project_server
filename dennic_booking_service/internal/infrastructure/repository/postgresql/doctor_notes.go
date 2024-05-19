@@ -1,13 +1,14 @@
 package repo
 
 import (
-	"booking_service/internal/entity/doctor_notes"
-	"booking_service/internal/pkg/otlp"
-	"booking_service/internal/pkg/postgres"
 	"context"
 	"database/sql"
 	"fmt"
 	"time"
+
+	"booking_service/internal/entity/doctor_notes"
+	"booking_service/internal/pkg/otlp"
+	"booking_service/internal/pkg/postgres"
 )
 
 const (
@@ -37,7 +38,10 @@ func tableColumNotes() string {
 			deleted_at`
 }
 
-func (r *DoctorNotes) CreateDoctorNotes(ctx context.Context, req *doctor_notes.CreatedDoctorNote) (*doctor_notes.DoctorNote, error) {
+func (r *DoctorNotes) CreateDoctorNotes(
+	ctx context.Context,
+	req *doctor_notes.CreatedDoctorNote,
+) (*doctor_notes.DoctorNote, error) {
 	ctx, span := otlp.Start(ctx, serviceNameDoctorNotes, spanNameDoctorNotesRepo+"Create")
 	defer span.End()
 
@@ -60,7 +64,6 @@ func (r *DoctorNotes) CreateDoctorNotes(ctx context.Context, req *doctor_notes.C
 		).
 		Suffix(fmt.Sprintf("RETURNING %s", tableColumNotes())).
 		ToSql()
-
 	if err != nil {
 		return nil, err
 	}
@@ -89,7 +92,10 @@ func (r *DoctorNotes) CreateDoctorNotes(ctx context.Context, req *doctor_notes.C
 	return &note, nil
 }
 
-func (r *DoctorNotes) GetDoctorNotes(ctx context.Context, req *doctor_notes.FieldValueReq) (*doctor_notes.DoctorNote, error) {
+func (r *DoctorNotes) GetDoctorNotes(
+	ctx context.Context,
+	req *doctor_notes.FieldValueReq,
+) (*doctor_notes.DoctorNote, error) {
 	ctx, span := otlp.Start(ctx, serviceNameDoctorNotes, spanNameDoctorNotesRepo+"Get")
 	defer span.End()
 
@@ -109,7 +115,6 @@ func (r *DoctorNotes) GetDoctorNotes(ctx context.Context, req *doctor_notes.Fiel
 	}
 
 	toSqls, args, err := toSql.ToSql()
-
 	if err != nil {
 		return nil, err
 	}
@@ -138,7 +143,10 @@ func (r *DoctorNotes) GetDoctorNotes(ctx context.Context, req *doctor_notes.Fiel
 	return &note, nil
 }
 
-func (r *DoctorNotes) GetAllDoctorNotes(ctx context.Context, req *doctor_notes.GetAllNotes) (*doctor_notes.DoctorNotesType, error) {
+func (r *DoctorNotes) GetAllDoctorNotes(
+	ctx context.Context,
+	req *doctor_notes.GetAllNotes,
+) (*doctor_notes.DoctorNotesType, error) {
 	ctx, span := otlp.Start(ctx, serviceNameDoctorNotes, spanNameDoctorNotesRepo+"List")
 	defer span.End()
 
@@ -146,7 +154,7 @@ func (r *DoctorNotes) GetAllDoctorNotes(ctx context.Context, req *doctor_notes.G
 		notes   doctor_notes.DoctorNotesType
 		upTime  sql.NullTime
 		delTime sql.NullTime
-		count int64
+		count   int64
 	)
 
 	toSql := r.db.Sq.Builder.
@@ -155,22 +163,22 @@ func (r *DoctorNotes) GetAllDoctorNotes(ctx context.Context, req *doctor_notes.G
 
 	countBuilder := r.db.Sq.Builder.Select("count(*)").From(tableNameDoctorNotes)
 
-	if req.Page >= 1 && req.Limit >= 1 {
-		toSql = toSql.
-			Limit(req.Limit).
-			Offset(req.Limit * (req.Page - 1))
-	}
+	toSql = toSql.
+		Limit(req.Limit).
+		Offset(req.Limit * (req.Page - 1))
+
 	if req.Value != "" {
 		toSql = toSql.Where(r.db.Sq.ILike(req.Field, req.Value+"%"))
 	}
 	if req.OrderBy != "" {
 		toSql = toSql.OrderBy(req.OrderBy)
 	}
+
 	if !req.DeleteStatus {
+		countBuilder = countBuilder.Where(r.db.Sq.Equal("deleted_at", nil))
 		toSql = toSql.Where(r.db.Sq.Equal("deleted_at", nil))
 	}
 	toSqls, args, err := toSql.ToSql()
-
 	if err != nil {
 		return nil, err
 	}
@@ -181,13 +189,11 @@ func (r *DoctorNotes) GetAllDoctorNotes(ctx context.Context, req *doctor_notes.G
 	}
 
 	err = r.db.QueryRow(ctx, queryCount).Scan(&count)
-
 	if err != nil {
 		return nil, err
 	}
 
 	rows, err := r.db.Query(ctx, toSqls, args...)
-
 	if err != nil {
 		return nil, err
 	}
@@ -223,7 +229,10 @@ func (r *DoctorNotes) GetAllDoctorNotes(ctx context.Context, req *doctor_notes.G
 	return &notes, nil
 }
 
-func (r *DoctorNotes) UpdateDoctorNotes(ctx context.Context, req *doctor_notes.UpdateDoctorNoteReq) (*doctor_notes.DoctorNote, error) {
+func (r *DoctorNotes) UpdateDoctorNotes(
+	ctx context.Context,
+	req *doctor_notes.UpdateDoctorNoteReq,
+) (*doctor_notes.DoctorNote, error) {
 	ctx, span := otlp.Start(ctx, serviceNameDoctorNotes, spanNameDoctorNotesRepo+"Update")
 	defer span.End()
 
@@ -244,7 +253,6 @@ func (r *DoctorNotes) UpdateDoctorNotes(ctx context.Context, req *doctor_notes.U
 		Where(r.db.Sq.Equal(req.Field, req.Value)).
 		Suffix(fmt.Sprintf("RETURNING %s", tableColumNotes())).
 		ToSql()
-
 	if err != nil {
 		return nil, err
 	}
@@ -271,10 +279,12 @@ func (r *DoctorNotes) UpdateDoctorNotes(ctx context.Context, req *doctor_notes.U
 	}
 
 	return &note, nil
-
 }
 
-func (r *DoctorNotes) DeleteDoctorNotes(ctx context.Context, req *doctor_notes.FieldValueReq) (*doctor_notes.StatusRes, error) {
+func (r *DoctorNotes) DeleteDoctorNotes(
+	ctx context.Context,
+	req *doctor_notes.FieldValueReq,
+) (*doctor_notes.StatusRes, error) {
 	ctx, span := otlp.Start(ctx, serviceNameDoctorNotes, spanNameDoctorNotesRepo+"Delete")
 	defer span.End()
 
@@ -291,28 +301,32 @@ func (r *DoctorNotes) DeleteDoctorNotes(ctx context.Context, req *doctor_notes.F
 			return &doctor_notes.StatusRes{Status: false}, err
 		}
 
-		_, err = r.db.Exec(ctx, toSql, args...)
-
+		resp, err := r.db.Exec(ctx, toSql, args...)
 		if err != nil {
 			return &doctor_notes.StatusRes{Status: false}, err
 		}
-		return &doctor_notes.StatusRes{Status: true}, nil
+		if resp.RowsAffected() > 0 {
+			return &doctor_notes.StatusRes{Status: true}, nil
+		}
+		return &doctor_notes.StatusRes{Status: false}, nil
 
 	} else {
 		toSql, args, err := r.db.Sq.Builder.
 			Delete(tableNameDoctorNotes).
 			Where(r.db.Sq.Equal(req.Field, req.Value)).
 			ToSql()
-
 		if err != nil {
 			return &doctor_notes.StatusRes{Status: false}, err
 		}
 
-		_, err = r.db.Exec(ctx, toSql, args...)
-
+		resp, err := r.db.Exec(ctx, toSql, args...)
 		if err != nil {
 			return &doctor_notes.StatusRes{Status: false}, err
 		}
-		return &doctor_notes.StatusRes{Status: true}, nil
+
+		if resp.RowsAffected() > 0 {
+			return &doctor_notes.StatusRes{Status: true}, nil
+		}
+		return &doctor_notes.StatusRes{Status: false}, nil
 	}
 }

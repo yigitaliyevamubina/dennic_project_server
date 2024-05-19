@@ -26,7 +26,7 @@ create-migration:
 proto-gen:
 	./scripts/gen-proto.sh
 
-DB_URL := "postgres://postgres:20030505@localhost:5432/dennic_booking_service?sslmode=disable"
+DB_URL := "postgres://postgres:20030505@localhost:5432/dennic?sslmode=disable"
 
 .PHONY: migrate-up
 migrate-up:

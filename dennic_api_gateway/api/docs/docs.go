@@ -63,7 +63,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model_booking_service.Appointment"
+                            "$ref": "#/definitions/model_booking_service.AppointmentsType"
                         }
                     },
                     "400": {
@@ -169,7 +169,7 @@ const docTemplate = `{
                 }
             },
             "delete": {
-                "description": "DeleteBookedAppointment - API to delete a appointment",
+                "description": "DeleteBookedAppointment - API to delete an appointment",
                 "consumes": [
                     "application/json"
                 ],
@@ -182,14 +182,11 @@ const docTemplate = `{
                 "summary": "DeleteBookedAppointment",
                 "parameters": [
                     {
-                        "type": "string",
-                        "name": "field",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "value",
-                        "in": "query"
+                        "type": "integer",
+                        "description": "id",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -230,13 +227,10 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "name": "field",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "value",
-                        "in": "query"
+                        "description": "id",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -644,6 +638,16 @@ const docTemplate = `{
                 "summary": "ListDepartments",
                 "parameters": [
                     {
+                        "enum": [
+                            "name",
+                            "description"
+                        ],
+                        "type": "string",
+                        "description": "search",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "name": "limit",
                         "in": "query"
@@ -661,16 +665,6 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "name": "value",
-                        "in": "query"
-                    },
-                    {
-                        "enum": [
-                            "name",
-                            "description"
-                        ],
-                        "type": "string",
-                        "description": "search",
-                        "name": "search",
                         "in": "query"
                     }
                 ],
@@ -798,13 +792,10 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "name": "field",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "value",
-                        "in": "query"
+                        "description": "id",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -1053,13 +1044,6 @@ const docTemplate = `{
                         "name": "id",
                         "in": "query",
                         "required": true
-                    },
-                    {
-                        "type": "boolean",
-                        "description": "hard_delete",
-                        "name": "hard_delete",
-                        "in": "query",
-                        "required": true
                     }
                 ],
                 "responses": {
@@ -1299,13 +1283,10 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "name": "field",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "value",
-                        "in": "query"
+                        "description": "id",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -1484,13 +1465,10 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "name": "field",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "value",
-                        "in": "query"
+                        "description": "id",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -1727,13 +1705,10 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "name": "field",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "value",
-                        "in": "query"
+                        "description": "id",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -1774,13 +1749,10 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "name": "field",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "value",
-                        "in": "query"
+                        "description": "id",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -1973,13 +1945,10 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "name": "field",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "value",
-                        "in": "query"
+                        "description": "id",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -2068,12 +2037,6 @@ const docTemplate = `{
                         "name": "id",
                         "in": "query",
                         "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "is_active",
-                        "name": "is_active",
-                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -2393,13 +2356,10 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "name": "field",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "value",
-                        "in": "query"
+                        "description": "id",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -2440,13 +2400,10 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "name": "field",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "value",
-                        "in": "query"
+                        "description": "id",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -2690,13 +2647,10 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "name": "field",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "value",
-                        "in": "query"
+                        "description": "id",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -3033,13 +2987,10 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "name": "field",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "value",
-                        "in": "query"
+                        "description": "id",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -3268,15 +3219,8 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Field",
-                        "name": "Field",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Value",
-                        "name": "Value",
+                        "description": "id",
+                        "name": "id",
                         "in": "query",
                         "required": true
                     }
@@ -3441,6 +3385,20 @@ const docTemplate = `{
                 },
                 "updated_at": {
                     "type": "string"
+                }
+            }
+        },
+        "model_booking_service.AppointmentsType": {
+            "type": "object",
+            "properties": {
+                "appointments": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model_booking_service.Appointment"
+                    }
+                },
+                "count": {
+                    "type": "integer"
                 }
             }
         },

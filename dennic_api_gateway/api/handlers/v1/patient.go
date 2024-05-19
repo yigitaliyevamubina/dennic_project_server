@@ -81,20 +81,19 @@ func (h *HandlerV1) CreatePatient(c *gin.Context) {
 // @Tags Patient
 // @Accept json
 // @Produce json
-// @Param GetDoctorTimeReq query models.FieldValueReq true "FieldValueReq"
+// @Param id query string true "id"
 // @Success 200 {object} model_booking_service.Patient
 // @Failure 400 {object} model_common.StandardErrorModel
 // @Failure 500 {object} model_common.StandardErrorModel
 // @Router /v1/patient/get [get]
 func (h *HandlerV1) GetPatient(c *gin.Context) {
-	field := c.Query("field")
-	value := c.Query("value")
+	value := c.Query("id")
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*time.Duration(h.cfg.Context.Timeout))
 	defer cancel()
 
 	res, err := h.serviceManager.BookingService().PatientService().GetPatient(ctx, &pb.PatientFieldValueReq{
-		Field:    field,
+		Field:    "id",
 		Value:    value,
 		IsActive: false,
 	})
@@ -285,20 +284,19 @@ func (h *HandlerV1) UpdatePhonePatient(c *gin.Context) {
 // @Tags Patient
 // @Accept json
 // @Produce json
-// @Param DeleteArchiveReq query models.FieldValueReq true "FieldValueReq"
+// @Param id query string true "id"
 // @Success 200 {object} models.StatusRes
 // @Failure 400 {object} model_common.StandardErrorModel
 // @Failure 500 {object} model_common.StandardErrorModel
 // @Router /v1/patient [delete]
 func (h *HandlerV1) DeletePatient(c *gin.Context) {
-	field := c.Query("field")
-	value := c.Query("value")
+	value := c.Query("id")
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*time.Duration(h.cfg.Context.Timeout))
 	defer cancel()
 
 	status, err := h.serviceManager.BookingService().PatientService().DeletePatient(ctx, &pb.PatientFieldValueReq{
-		Field:    field,
+		Field:    "id",
 		Value:    value,
 		IsActive: false,
 	})

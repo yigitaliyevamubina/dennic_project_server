@@ -11,7 +11,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"github.com/spf13/cast"
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
@@ -101,21 +100,19 @@ func (h *HandlerV1) CreateDoctor(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param id query string true "id"
-// @Param is_active query string false "is_active"
 // @Success 200 {object} model_healthcare_service.DoctorAndDoctorHours
 // @Failure 400 {object} model_common.StandardErrorModel
 // @Failure 500 {object} model_common.StandardErrorModel
 // @Router /v1/doctor/get [get]
 func (h *HandlerV1) GetDoctor(c *gin.Context) {
 	id := c.Query("id")
-	isActive := c.Query("is_active")
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*time.Duration(h.cfg.Context.Timeout))
 	defer cancel()
 
 	doctor, err := h.serviceManager.HealthcareService().DoctorService().GetDoctorById(ctx, &pb.GetReqStrDoctor{
 		Field:    "id",
 		Value:    id,
-		IsActive: !cast.ToBool(isActive),
+		IsActive: false,
 	})
 
 	if e.HandleError(c, err, h.log, http.StatusInternalServerError, "GetDoctor") {
@@ -179,7 +176,6 @@ func (h *HandlerV1) ListDoctors(c *gin.Context) {
 	limit := c.Query("limit")
 	page := c.Query("page")
 	orderBy := c.Query("orderBy")
-	isActive := c.Query("is_active")
 
 	pageInt, limitInt, err := e.ParseQueryParams(page, limit)
 	if e.HandleError(c, err, h.log, http.StatusBadRequest, "ListDoctors") {
@@ -192,7 +188,7 @@ func (h *HandlerV1) ListDoctors(c *gin.Context) {
 	doctors, err := h.serviceManager.HealthcareService().DoctorService().GetAllDoctors(ctx, &pb.GetAllDoctorS{
 		Field:    search,
 		Value:    value,
-		IsActive: !cast.ToBool(isActive),
+		IsActive: false,
 		Page:     int64(pageInt),
 		Limit:    int64(limitInt),
 		OrderBy:  orderBy,
@@ -266,7 +262,6 @@ func (h *HandlerV1) ListDoctorsBySpecializationId(c *gin.Context) {
 	limit := c.Query("limit")
 	page := c.Query("page")
 	orderBy := c.Query("orderBy")
-	isActive := c.Query("is_active")
 
 	specId := c.Query("specialization_id")
 	pageInt, limitInt, err := e.ParseQueryParams(page, limit)
@@ -280,7 +275,7 @@ func (h *HandlerV1) ListDoctorsBySpecializationId(c *gin.Context) {
 	doctors, err := h.serviceManager.HealthcareService().DoctorService().ListDoctorBySpecializationId(ctx, &pb.GetReqStrSpec{
 		Field:            field,
 		Value:            value,
-		IsActive:         !cast.ToBool(isActive),
+		IsActive:         false,
 		Page:             int32(pageInt),
 		Limit:            int32(limitInt),
 		OrderBy:          orderBy,
@@ -418,14 +413,12 @@ func (h *HandlerV1) UpdateDoctor(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param id query string true "id"
-// @Param hard_delete query bool true "hard_delete"
 // @Success 200 {object} models.StatusRes
 // @Failure 400 {object} model_common.StandardErrorModel
 // @Failure 500 {object} model_common.StandardErrorModel
 // @Router /v1/doctor [delete]
 func (h *HandlerV1) DeleteDoctor(c *gin.Context) {
 	value := c.Query("id")
-	isActive := c.Query("hard_delete")
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*time.Duration(h.cfg.Context.Timeout))
 	defer cancel()
@@ -433,7 +426,7 @@ func (h *HandlerV1) DeleteDoctor(c *gin.Context) {
 	status, err := h.serviceManager.HealthcareService().DoctorService().DeleteDoctor(ctx, &pb.GetReqStrDoctor{
 		Field:    "id",
 		Value:    value,
-		IsActive: cast.ToBool(isActive),
+		IsActive: false,
 	})
 
 	if e.HandleError(c, err, h.log, http.StatusInternalServerError, "DeleteDoctor") {

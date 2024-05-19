@@ -1,13 +1,14 @@
 package repo
 
 import (
-	"booking_service/internal/entity/patients"
-	"booking_service/internal/pkg/otlp"
-	"booking_service/internal/pkg/postgres"
 	"context"
 	"database/sql"
 	"fmt"
 	"time"
+
+	"booking_service/internal/entity/patients"
+	"booking_service/internal/pkg/otlp"
+	"booking_service/internal/pkg/postgres"
 )
 
 const (
@@ -43,7 +44,10 @@ func tableColumPatients() string {
 			deleted_at`
 }
 
-func (r *BookingPatients) CreatePatient(ctx context.Context, req *patients.CreatedPatient) (*patients.Patient, error) {
+func (r *BookingPatients) CreatePatient(
+	ctx context.Context,
+	req *patients.CreatedPatient,
+) (*patients.Patient, error) {
 	ctx, span := otlp.Start(ctx, serviceNamePatient, spanNamePatientRepo+"Create")
 	defer span.End()
 	var (
@@ -77,7 +81,6 @@ func (r *BookingPatients) CreatePatient(ctx context.Context, req *patients.Creat
 			req.PatientProblem).
 		Suffix(fmt.Sprintf("RETURNING %s", tableColumPatients())).
 		ToSql()
-
 	if err != nil {
 		return nil, err
 	}
@@ -110,10 +113,12 @@ func (r *BookingPatients) CreatePatient(ctx context.Context, req *patients.Creat
 	}
 
 	return &patient, nil
-
 }
 
-func (r *BookingPatients) GetPatient(ctx context.Context, req *patients.FieldValueReq) (*patients.Patient, error) {
+func (r *BookingPatients) GetPatient(
+	ctx context.Context,
+	req *patients.FieldValueReq,
+) (*patients.Patient, error) {
 	ctx, span := otlp.Start(ctx, serviceNamePatient, spanNamePatientRepo+"Get")
 	defer span.End()
 
@@ -133,7 +138,6 @@ func (r *BookingPatients) GetPatient(ctx context.Context, req *patients.FieldVal
 	}
 
 	toSqls, args, err := toSql.ToSql()
-
 	if err != nil {
 		return nil, err
 	}
@@ -168,7 +172,10 @@ func (r *BookingPatients) GetPatient(ctx context.Context, req *patients.FieldVal
 	return &patient, nil
 }
 
-func (r *BookingPatients) GetAllPatiens(ctx context.Context, req *patients.GetAllPatients) (*patients.PatientsType, error) {
+func (r *BookingPatients) GetAllPatiens(
+	ctx context.Context,
+	req *patients.GetAllPatients,
+) (*patients.PatientsType, error) {
 	ctx, span := otlp.Start(ctx, serviceNamePatient, spanNamePatientRepo+"List")
 	defer span.End()
 
@@ -185,11 +192,10 @@ func (r *BookingPatients) GetAllPatiens(ctx context.Context, req *patients.GetAl
 
 	countBuilder := r.db.Sq.Builder.Select("count(*)").From(tableNamePatients)
 
-	if req.Page >= 1 && req.Limit >= 1 {
-		toSql = toSql.
-			Limit(req.Limit).
-			Offset(req.Limit * (req.Page - 1))
-	}
+	toSql = toSql.
+		Limit(req.Limit).
+		Offset(req.Limit * (req.Page - 1))
+
 	if req.Value != "" {
 		toSql = toSql.Where(r.db.Sq.ILike(req.Field, req.Value+"%"))
 	}
@@ -197,10 +203,10 @@ func (r *BookingPatients) GetAllPatiens(ctx context.Context, req *patients.GetAl
 		toSql = toSql.OrderBy(req.OrderBy)
 	}
 	if !req.DeleteStatus {
+		countBuilder = countBuilder.Where(r.db.Sq.Equal("deleted_at", nil))
 		toSql = toSql.Where(r.db.Sq.Equal("deleted_at", nil))
 	}
 	toSqls, args, err := toSql.ToSql()
-
 	if err != nil {
 		return nil, err
 	}
@@ -216,7 +222,6 @@ func (r *BookingPatients) GetAllPatiens(ctx context.Context, req *patients.GetAl
 	}
 
 	rows, err := r.db.Query(ctx, toSqls, args...)
-
 	if err != nil {
 		return nil, err
 	}
@@ -249,7 +254,10 @@ func (r *BookingPatients) GetAllPatiens(ctx context.Context, req *patients.GetAl
 	return &patientss, nil
 }
 
-func (r *BookingPatients) UpdatePatient(ctx context.Context, req *patients.UpdatePatient) (*patients.Patient, error) {
+func (r *BookingPatients) UpdatePatient(
+	ctx context.Context,
+	req *patients.UpdatePatient,
+) (*patients.Patient, error) {
 	ctx, span := otlp.Start(ctx, serviceNamePatient, spanNamePatientRepo+"Update")
 	defer span.End()
 
@@ -275,7 +283,6 @@ func (r *BookingPatients) UpdatePatient(ctx context.Context, req *patients.Updat
 		Where(r.db.Sq.Equal(req.Field, req.Value)).
 		Suffix(fmt.Sprintf("RETURNING %s", tableColumPatients())).
 		ToSql()
-
 	if err != nil {
 		return nil, err
 	}
@@ -308,10 +315,12 @@ func (r *BookingPatients) UpdatePatient(ctx context.Context, req *patients.Updat
 	}
 
 	return &patient, nil
-
 }
 
-func (r *BookingPatients) UpdatePhonePatient(ctx context.Context, req *patients.UpdatePhoneNumber) (*patients.StatusRes, error) {
+func (r *BookingPatients) UpdatePhonePatient(
+	ctx context.Context,
+	req *patients.UpdatePhoneNumber,
+) (*patients.StatusRes, error) {
 	ctx, span := otlp.Start(ctx, serviceNamePatient, spanNamePatientRepo+"UpdatePhone")
 	defer span.End()
 
@@ -323,23 +332,22 @@ func (r *BookingPatients) UpdatePhonePatient(ctx context.Context, req *patients.
 		}).
 		Where(r.db.Sq.Equal(req.Field, req.Value)).
 		ToSql()
-
 	if err != nil {
 		return &patients.StatusRes{Status: false}, err
 	}
 
 	_, err = r.db.Exec(ctx, toSql, args...)
-
 	if err != nil {
 		return &patients.StatusRes{Status: false}, err
-
 	}
 
 	return &patients.StatusRes{Status: true}, nil
-
 }
 
-func (r *BookingPatients) DeletePatient(ctx context.Context, req *patients.FieldValueReq) (*patients.StatusRes, error) {
+func (r *BookingPatients) DeletePatient(
+	ctx context.Context,
+	req *patients.FieldValueReq,
+) (*patients.StatusRes, error) {
 	ctx, span := otlp.Start(ctx, serviceNamePatient, spanNamePatientRepo+"Delete")
 	defer span.End()
 
@@ -356,27 +364,32 @@ func (r *BookingPatients) DeletePatient(ctx context.Context, req *patients.Field
 			return &patients.StatusRes{Status: false}, err
 		}
 
-		_, err = r.db.Exec(ctx, toSql, args...)
-
+		resp, err := r.db.Exec(ctx, toSql, args...)
 		if err != nil {
 			return &patients.StatusRes{Status: false}, err
 		}
-		return &patients.StatusRes{Status: true}, nil
+		if resp.RowsAffected() > 0 {
+			return &patients.StatusRes{Status: true}, nil
+		}
+		return &patients.StatusRes{Status: false}, nil
 
 	} else {
 		toSql, args, err := r.db.Sq.Builder.
 			Delete(tableNamePatients).
 			Where(r.db.Sq.Equal(req.Field, req.Value)).
 			ToSql()
-
 		if err != nil {
 			return &patients.StatusRes{Status: false}, err
 		}
 
-		_, err = r.db.Exec(ctx, toSql, args...)
+		resp, err := r.db.Exec(ctx, toSql, args...)
 		if err != nil {
 			return &patients.StatusRes{Status: false}, err
 		}
-		return &patients.StatusRes{Status: true}, nil
+
+		if resp.RowsAffected() > 0 {
+			return &patients.StatusRes{Status: true}, nil
+		}
+		return &patients.StatusRes{Status: false}, nil
 	}
 }

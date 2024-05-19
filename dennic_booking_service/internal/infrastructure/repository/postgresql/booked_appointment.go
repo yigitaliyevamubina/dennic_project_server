@@ -1,13 +1,14 @@
 package repo
 
 import (
-	appointment "booking_service/internal/entity/booked_appointments"
-	"booking_service/internal/pkg/otlp"
-	"booking_service/internal/pkg/postgres"
 	"context"
 	"database/sql"
 	"fmt"
 	"time"
+
+	appointment "booking_service/internal/entity/booked_appointments"
+	"booking_service/internal/pkg/otlp"
+	"booking_service/internal/pkg/postgres"
 )
 
 const (
@@ -46,7 +47,10 @@ func tableColums() string {
 			deleted_at`
 }
 
-func (r *BookingAppointment) CreateAppointment(ctx context.Context, req *appointment.CreateAppointment) (*appointment.Appointment, error) {
+func (r *BookingAppointment) CreateAppointment(
+	ctx context.Context,
+	req *appointment.CreateAppointment,
+) (*appointment.Appointment, error) {
 	ctx, span := otlp.Start(ctx, serviceNameAppointment, spanNameAppointmentRepo+"Create")
 	defer span.End()
 	var (
@@ -123,7 +127,10 @@ func (r *BookingAppointment) CreateAppointment(ctx context.Context, req *appoint
 	return &response, nil
 }
 
-func (r *BookingAppointment) GetAppointment(ctx context.Context, req *appointment.FieldValueReq) (*appointment.Appointment, error) {
+func (r *BookingAppointment) GetAppointment(
+	ctx context.Context,
+	req *appointment.FieldValueReq,
+) (*appointment.Appointment, error) {
 	ctx, span := otlp.Start(ctx, serviceNameAppointment, spanNameAppointmentRepo+"Get")
 	defer span.End()
 
@@ -141,7 +148,6 @@ func (r *BookingAppointment) GetAppointment(ctx context.Context, req *appointmen
 		toSql = toSql.Where(r.db.Sq.Equal("deleted_at", nil))
 	}
 	toSqls, args, err := toSql.Where(r.db.Sq.Equal(req.Field, req.Value)).ToSql()
-
 	if err != nil {
 		return nil, err
 	}
@@ -178,7 +184,10 @@ func (r *BookingAppointment) GetAppointment(ctx context.Context, req *appointmen
 	return &response, nil
 }
 
-func (r *BookingAppointment) GetAllAppointment(ctx context.Context, req *appointment.GetAllAppointment) (*appointment.AppointmentsType, error) {
+func (r *BookingAppointment) GetAllAppointment(
+	ctx context.Context,
+	req *appointment.GetAllAppointment,
+) (*appointment.AppointmentsType, error) {
 	ctx, span := otlp.Start(ctx, serviceNameAppointment, spanNameAppointmentRepo+"List")
 	defer span.End()
 
@@ -208,11 +217,11 @@ func (r *BookingAppointment) GetAllAppointment(ctx context.Context, req *appoint
 		toSql = toSql.OrderBy(req.OrderBy)
 	}
 	if !req.DeleteStatus {
+		countBuilder = countBuilder.Where(r.db.Sq.Equal("deleted_at", nil))
 		toSql = toSql.Where(r.db.Sq.Equal("deleted_at", nil))
 	}
 
 	toSqls, args, err := toSql.ToSql()
-
 	if err != nil {
 		return nil, err
 	}
@@ -223,14 +232,11 @@ func (r *BookingAppointment) GetAllAppointment(ctx context.Context, req *appoint
 	}
 
 	err = r.db.QueryRow(ctx, queryCount).Scan(&count)
-
 	if err != nil {
 		return nil, err
 	}
 
-
 	rows, err := r.db.Query(ctx, toSqls, args...)
-
 	if err != nil {
 		return nil, err
 	}
@@ -274,7 +280,10 @@ func (r *BookingAppointment) GetAllAppointment(ctx context.Context, req *appoint
 	return &response, nil
 }
 
-func (r *BookingAppointment) UpdateAppointment(ctx context.Context, req *appointment.UpdateAppointment) (*appointment.Appointment, error) {
+func (r *BookingAppointment) UpdateAppointment(
+	ctx context.Context,
+	req *appointment.UpdateAppointment,
+) (*appointment.Appointment, error) {
 	ctx, span := otlp.Start(ctx, serviceNameAppointment, spanNameAppointmentRepo+"Update")
 	defer span.End()
 
@@ -288,6 +297,7 @@ func (r *BookingAppointment) UpdateAppointment(ctx context.Context, req *appoint
 		SetMap(map[string]interface{}{
 			"department_id":     req.DepartmentId,
 			"patient_id":        req.PatientId,
+			"doctor_id":         req.DoctorId,
 			"doctor_service_id": req.ServiceId,
 			"appointment_date":  req.AppointmentDate.String(),
 			"appointment_time":  req.AppointmentTime,
@@ -306,7 +316,6 @@ func (r *BookingAppointment) UpdateAppointment(ctx context.Context, req *appoint
 	if err != nil {
 		return nil, err
 	}
-
 	if err = r.db.QueryRow(ctx, toSql, args...).Scan(
 		&response.Id,
 		&response.DepartmentId,
@@ -340,7 +349,10 @@ func (r *BookingAppointment) UpdateAppointment(ctx context.Context, req *appoint
 	return &response, nil
 }
 
-func (r *BookingAppointment) DeleteAppointment(ctx context.Context, req *appointment.FieldValueReq) (*appointment.StatusRes, error) {
+func (r *BookingAppointment) DeleteAppointment(
+	ctx context.Context,
+	req *appointment.FieldValueReq,
+) (*appointment.StatusRes, error) {
 	ctx, span := otlp.Start(ctx, serviceNameAppointment, spanNameAppointmentRepo+"Delete")
 	defer span.End()
 	if !req.DeleteStatus {
@@ -356,28 +368,32 @@ func (r *BookingAppointment) DeleteAppointment(ctx context.Context, req *appoint
 			return &appointment.StatusRes{Status: false}, err
 		}
 
-		_, err = r.db.Exec(ctx, toSql, args...)
-
+		resp, err := r.db.Exec(ctx, toSql, args...)
 		if err != nil {
 			return &appointment.StatusRes{Status: false}, err
 		}
-		return &appointment.StatusRes{Status: true}, nil
+		if resp.RowsAffected() > 0 {
+			return &appointment.StatusRes{Status: true}, nil
+		}
+		return &appointment.StatusRes{Status: false}, nil
 
 	} else {
 		toSql, args, err := r.db.Sq.Builder.
 			Delete(tableNameAppointment).
 			Where(r.db.Sq.Equal(req.Field, req.Value)).
 			ToSql()
-
 		if err != nil {
 			return &appointment.StatusRes{Status: false}, err
 		}
 
-		_, err = r.db.Exec(ctx, toSql, args...)
-
+		resp, err := r.db.Exec(ctx, toSql, args...)
 		if err != nil {
 			return &appointment.StatusRes{Status: false}, err
 		}
-		return &appointment.StatusRes{Status: true}, nil
+
+		if resp.RowsAffected() > 0 {
+			return &appointment.StatusRes{Status: true}, nil
+		}
+		return &appointment.StatusRes{Status: false}, nil
 	}
 }

@@ -86,21 +86,20 @@ func (h *HandlerV1) CreateBookedAppointment(c *gin.Context) {
 // @Tags Appointment
 // @Accept json
 // @Produce json
-// @Param GetArchiveReq query models.FieldValueReq true "FieldValueReq"
+// @Param id query string true "id"
 // @Success 200 {object} model_booking_service.Appointment
 // @Failure 400 {object} model_common.StandardErrorModel
 // @Failure 500 {object} model_common.StandardErrorModel
 // @Router /v1/appointment/get [get]
 func (h *HandlerV1) GetBookedAppointment(c *gin.Context) {
-	field := c.Query("field")
-	value := c.Query("value")
+	id := c.Query("id")
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*time.Duration(h.cfg.Context.Timeout))
 	defer cancel()
 
 	res, err := h.serviceManager.BookingService().BookedAppointment().GetAppointment(ctx, &pb.AppointmentFieldValueReq{
-		Field:    field,
-		Value:    value,
+		Field:    "id",
+		Value:    id,
 		IsActive: false,
 	})
 
@@ -136,7 +135,7 @@ func (h *HandlerV1) GetBookedAppointment(c *gin.Context) {
 // @Produce json
 // @Param search query string false "search" Enums(key)
 // @Param ListReq query models.ListReq false "ListReq"
-// @Success 200 {object} model_booking_service.Appointment
+// @Success 200 {object} model_booking_service.AppointmentsType
 // @Failure 400 {object} model_common.StandardErrorModel
 // @Failure 500 {object} model_common.StandardErrorModel
 // @Router /v1/appointment [get]
@@ -215,7 +214,6 @@ func (h *HandlerV1) UpdateBookedAppointment(c *gin.Context) {
 	jsonMarshal.UseProtoNames = true
 
 	err := c.ShouldBindJSON(&body)
-
 	if e.HandleError(c, err, h.log, http.StatusBadRequest, "UpdateBookedAppointment") {
 		return
 	}
@@ -264,25 +262,24 @@ func (h *HandlerV1) UpdateBookedAppointment(c *gin.Context) {
 
 // DeleteBookedAppointment ...
 // @Summary DeleteBookedAppointment
-// @Description DeleteBookedAppointment - API to delete a appointment
+// @Description DeleteBookedAppointment - API to delete an appointment
 // @Tags Appointment
 // @Accept json
 // @Produce json
-// @Param DeleteArchiveReq query models.FieldValueReq true "FieldValueReq"
+// @Param id query integer true "id"
 // @Success 200 {object} models.StatusRes
 // @Failure 400 {object} model_common.StandardErrorModel
 // @Failure 500 {object} model_common.StandardErrorModel
 // @Router /v1/appointment [delete]
 func (h *HandlerV1) DeleteBookedAppointment(c *gin.Context) {
-	field := c.Query("field")
-	value := c.Query("value")
+	id := c.Query("id")
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*time.Duration(h.cfg.Context.Timeout))
 	defer cancel()
 
 	status, err := h.serviceManager.BookingService().BookedAppointment().DeleteAppointment(ctx, &pb.AppointmentFieldValueReq{
-		Field:    field,
-		Value:    value,
+		Field:    "id",
+		Value:    id,
 		IsActive: false,
 	})
 

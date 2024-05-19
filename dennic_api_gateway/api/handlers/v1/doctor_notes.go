@@ -68,21 +68,20 @@ func (h *HandlerV1) CreateDoctorNote(c *gin.Context) {
 // @Tags Doctor Note
 // @Accept json
 // @Produce json
-// @Param GetArchiveReq query models.FieldValueReq true "FieldValueReq"
+// @Param id query string true "id"
 // @Success 200 {object} model_booking_service.DoctorNote
 // @Failure 400 {object} model_common.StandardErrorModel
 // @Failure 500 {object} model_common.StandardErrorModel
 // @Router /v1/doctor-notes/get [get]
 func (h *HandlerV1) GetDoctorNote(c *gin.Context) {
-	field := c.Query("field")
-	value := c.Query("value")
+	id := c.Query("id")
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*time.Duration(h.cfg.Context.Timeout))
 	defer cancel()
 
 	doctorNote, err := h.serviceManager.BookingService().DoctorNotes().GetDoctorNote(ctx, &pb.FieldValueReq{
-		Field:    field,
-		Value:    value,
+		Field:    "id",
+		Value:    id,
 		IsActive: false,
 	})
 

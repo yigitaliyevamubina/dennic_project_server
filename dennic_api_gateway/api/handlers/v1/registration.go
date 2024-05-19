@@ -5,7 +5,6 @@ import (
 	e "dennic_admin_api_gateway/api/handlers/regtool"
 	"dennic_admin_api_gateway/api/models"
 	"dennic_admin_api_gateway/api/models/model_user_service"
-	ps "dennic_admin_api_gateway/genproto/session_service"
 	pb "dennic_admin_api_gateway/genproto/user_service"
 	"encoding/json"
 	"errors"
@@ -32,9 +31,6 @@ import (
 // @Failure 500 {object} model_common.StandardErrorModel
 // @Router /v1/customer/register [post]
 func (h *HandlerV1) Register(c *gin.Context) {
-	//rdb := redis.NewClient(&redis.Options{
-	//	Addr: "redisdb:6379",
-	//})
 
 	var (
 		body        model_user_service.Redis
@@ -111,10 +107,6 @@ func (h *HandlerV1) Register(c *gin.Context) {
 // @Failure 500 {object} model_common.StandardErrorModel
 // @Router /v1/customer/verify [post]
 func (h *HandlerV1) Verify(c *gin.Context) {
-	//rdb := redis.NewClient(&redis.Options{
-	//	Addr: "redisdb:6379",
-	//})
-
 	var (
 		body        model_user_service.Verify
 		user        model_user_service.Redis
@@ -168,17 +160,17 @@ func (h *HandlerV1) Verify(c *gin.Context) {
 
 	sessionId := uuid.New().String()
 
-	session, err := h.serviceManager.SessionService().SessionService().CreateSession(ctx, &ps.SessionRequests{
-		Id:           sessionId,
-		IpAddress:    c.RemoteIP(),
-		UserId:       user.Id,
-		FcmToken:     body.FcmToken,
-		PlatformName: body.PlatformName,
-		PlatformType: body.PlatformType,
-	})
-	if e.HandleError(c, err, h.log, http.StatusInternalServerError, SERVICE_ERROR) {
-		return
-	}
+	//session, err := h.serviceManager.SessionService().SessionService().CreateSession(ctx, &ps.SessionRequests{
+	//	Id:           sessionId,
+	//	IpAddress:    c.RemoteIP(),
+	//	UserId:       user.Id,
+	//	FcmToken:     body.FcmToken,
+	//	PlatformName: body.PlatformName,
+	//	PlatformType: body.PlatformType,
+	//})
+	//if e.HandleError(c, err, h.log, http.StatusInternalServerError, SERVICE_ERROR) {
+	//	return
+	//}
 
 	user.Password, err = e.HashPassword(user.Password)
 
@@ -186,7 +178,7 @@ func (h *HandlerV1) Verify(c *gin.Context) {
 		return
 	}
 
-	access, refresh, err := h.jwthandler.GenerateAuthJWT(user.PhoneNumber, user.Id, session.Id, "user")
+	access, refresh, err := h.jwthandler.GenerateAuthJWT(user.PhoneNumber, user.Id, sessionId, "user")
 
 	if e.HandleError(c, err, h.log, http.StatusInternalServerError, SERVICE_ERROR) {
 		return
@@ -274,7 +266,7 @@ func (h *HandlerV1) ForgetPassword(c *gin.Context) {
 		return
 	}
 
-	codeRed, _ := h.redis.Client.Get(ctx, body.PhoneNumber).Result()
+	codeRed, err := h.redis.Client.Get(ctx, body.PhoneNumber).Result()
 
 	if codeRed != "" {
 		err = errors.New(CODE_EXPIRATION_NOT_OVER)
@@ -494,18 +486,18 @@ func (h *HandlerV1) Login(c *gin.Context) {
 
 	sessionId := uuid.New().String()
 
-	_, err = h.serviceManager.SessionService().SessionService().CreateSession(ctx, &ps.SessionRequests{
-		Id:           sessionId,
-		IpAddress:    c.RemoteIP(),
-		UserId:       user.Id,
-		FcmToken:     body.FcmToken,
-		PlatformName: body.PlatformName,
-		PlatformType: body.PlatformType,
-	})
-
-	if e.HandleError(c, err, h.log, http.StatusInternalServerError, SERVICE_ERROR) {
-		return
-	}
+	//_, err = h.serviceManager.SessionService().SessionService().CreateSession(ctx, &ps.SessionRequests{
+	//	Id:           sessionId,
+	//	IpAddress:    c.RemoteIP(),
+	//	UserId:       user.Id,
+	//	FcmToken:     body.FcmToken,
+	//	PlatformName: body.PlatformName,
+	//	PlatformType: body.PlatformType,
+	//})
+	//
+	//if e.HandleError(c, err, h.log, http.StatusInternalServerError, SERVICE_ERROR) {
+	//	return
+	//}
 
 	access, refresh, err := h.jwthandler.GenerateAuthJWT(user.PhoneNumber, user.Id, sessionId, "user")
 	if e.HandleError(c, err, h.log, http.StatusInternalServerError, SERVICE_ERROR) {
@@ -545,22 +537,22 @@ func (h *HandlerV1) Login(c *gin.Context) {
 // @Failure 500 {object} model_common.StandardErrorModel
 // @Router /v1/customer/logout [post]
 func (h *HandlerV1) LogOut(c *gin.Context) {
-	userInfo, err := e.GetUserInfo(c)
-
-	if e.HandleError(c, err, h.log, http.StatusUnauthorized, "missing token in the header") {
-		return
-	}
-
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*time.Duration(h.cfg.Context.Timeout))
-	defer cancel()
-
-	_, err = h.serviceManager.SessionService().SessionService().DeleteSessionById(ctx, &ps.StrReq{
-		Id: userInfo.SessionId,
-	})
-
-	if e.HandleError(c, err, h.log, http.StatusInternalServerError, SERVICE_ERROR) {
-		return
-	}
+	//userInfo, err := e.GetUserInfo(c)
+	//
+	//if e.HandleError(c, err, h.log, http.StatusUnauthorized, "missing token in the header") {
+	//	return
+	//}
+	//
+	//ctx, cancel := context.WithTimeout(context.Background(), time.Second*time.Duration(h.cfg.Context.Timeout))
+	//defer cancel()
+	//
+	//_, err = h.serviceManager.SessionService().SessionService().DeleteSessionById(ctx, &ps.StrReq{
+	//	Id: userInfo.SessionId,
+	//})
+	//
+	//if e.HandleError(c, err, h.log, http.StatusInternalServerError, SERVICE_ERROR) {
+	//	return
+	//}
 
 	c.JSON(http.StatusOK, &model_user_service.MessageRes{Message: "Log out done!"})
 }
@@ -609,7 +601,7 @@ func (h *HandlerV1) SenOtpCode(c *gin.Context) {
 		return
 	}
 
-	codeRed, _ := h.redis.Client.Get(ctx, body.PhoneNumber).Result()
+	codeRed, err := h.redis.Client.Get(ctx, body.PhoneNumber).Result()
 	if codeRed != "" {
 		err = errors.New(CODE_EXPIRATION_NOT_OVER)
 		if e.HandleError(c, err, h.log, http.StatusBadRequest, CODE_EXPIRATION_NOT_OVER) {

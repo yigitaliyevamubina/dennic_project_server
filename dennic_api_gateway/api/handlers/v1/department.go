@@ -111,8 +111,8 @@ func (h *HandlerV1) GetDepartment(c *gin.Context) {
 // @Tags Department
 // @Accept json
 // @Produce json
-// @Param ListReq query models.ListReq false "ListReq"
 // @Param search query string false "search" Enums(name, description) "search"
+// @Param ListReq query models.ListReq false "ListReq"
 // @Success 200 {object} model_healthcare_service.ListDepartments
 // @Failure 400 {object} model_common.StandardErrorModel
 // @Failure 500 {object} model_common.StandardErrorModel
@@ -223,20 +223,19 @@ func (h *HandlerV1) UpdateDepartment(c *gin.Context) {
 // @Tags Department
 // @Accept json
 // @Produce json
-// @Param DeleteDepartmentReq query models.FieldValueReq true "FieldValueReq"
+// @Param id query string true "id"
 // @Success 200 {object} models.StatusRes
 // @Failure 400 {object} model_common.StandardErrorModel
 // @Failure 500 {object} model_common.StandardErrorModel
 // @Router /v1/department [delete]
 func (h *HandlerV1) DeleteDepartment(c *gin.Context) {
-	field := c.Query("field")
-	value := c.Query("value")
+	value := c.Query("id")
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*time.Duration(h.cfg.Context.Timeout))
 	defer cancel()
 
 	status, err := h.serviceManager.HealthcareService().DepartmentService().DeleteDepartment(ctx, &pb.GetReqStrDepartment{
-		Field:    field,
+		Field:    "id",
 		Value:    value,
 		IsActive: false,
 	})

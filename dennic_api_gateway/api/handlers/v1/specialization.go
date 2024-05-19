@@ -223,20 +223,19 @@ func (h *HandlerV1) UpdateSpecialization(c *gin.Context) {
 // @Tags Specialization
 // @Accept json
 // @Produce json
-// @Param DeleteSpecializationReq query models.FieldValueReq true "FieldValueReq"
+// @Param id query string true "id"
 // @Success 200 {object} models.StatusRes
 // @Failure 400 {object} model_common.StandardErrorModel
 // @Failure 500 {object} model_common.StandardErrorModel
 // @Router /v1/specialization [delete]
 func (h *HandlerV1) DeleteSpecialization(c *gin.Context) {
-	field := c.Query("field")
-	value := c.Query("value")
+	value := c.Query("id")
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*time.Duration(h.cfg.Context.Timeout))
 	defer cancel()
 
 	status, err := h.serviceManager.HealthcareService().SpecializationService().DeleteSpecialization(ctx, &pb.GetReqStrSpecialization{
-		Field:    field,
+		Field:    "id",
 		Value:    value,
 		IsActive: false,
 	})

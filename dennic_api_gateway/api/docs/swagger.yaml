@@ -34,6 +34,15 @@ definitions:
       updated_at:
         type: string
     type: object
+  model_booking_service.AppointmentsType:
+    properties:
+      appointments:
+        items:
+          $ref: '#/definitions/model_booking_service.Appointment'
+        type: array
+      count:
+        type: integer
+    type: object
   model_booking_service.CreateAppointmentReq:
     properties:
       appointment_date:
@@ -979,14 +988,13 @@ paths:
     delete:
       consumes:
       - application/json
-      description: DeleteBookedAppointment - API to delete a appointment
+      description: DeleteBookedAppointment - API to delete an appointment
       parameters:
-      - in: query
-        name: field
-        type: string
-      - in: query
-        name: value
-        type: string
+      - description: id
+        in: query
+        name: id
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
@@ -1034,7 +1042,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model_booking_service.Appointment'
+            $ref: '#/definitions/model_booking_service.AppointmentsType'
         "400":
           description: Bad Request
           schema:
@@ -1110,11 +1118,10 @@ paths:
       - application/json
       description: GetBookedAppointment - API to get Booked appointment by ID
       parameters:
-      - in: query
-        name: field
-        type: string
-      - in: query
-        name: value
+      - description: id
+        in: query
+        name: id
+        required: true
         type: string
       produces:
       - application/json
@@ -1378,11 +1385,10 @@ paths:
       - application/json
       description: DeleteDepartment - Api for delete department
       parameters:
-      - in: query
-        name: field
-        type: string
-      - in: query
-        name: value
+      - description: id
+        in: query
+        name: id
+        required: true
         type: string
       produces:
       - application/json
@@ -1407,6 +1413,13 @@ paths:
       - application/json
       description: ListDepartments - Api for list department
       parameters:
+      - description: search
+        enum:
+        - name
+        - description
+        in: query
+        name: search
+        type: string
       - in: query
         name: limit
         type: string
@@ -1418,13 +1431,6 @@ paths:
         type: string
       - in: query
         name: value
-        type: string
-      - description: search
-        enum:
-        - name
-        - description
-        in: query
-        name: search
         type: string
       produces:
       - application/json
@@ -1542,11 +1548,6 @@ paths:
         name: id
         required: true
         type: string
-      - description: hard_delete
-        in: query
-        name: hard_delete
-        required: true
-        type: boolean
       produces:
       - application/json
       responses:
@@ -1807,11 +1808,10 @@ paths:
       - application/json
       description: GetDoctorNote - API to get doctor note by ID
       parameters:
-      - in: query
-        name: field
-        type: string
-      - in: query
-        name: value
+      - description: id
+        in: query
+        name: id
+        required: true
         type: string
       produces:
       - application/json
@@ -1837,11 +1837,10 @@ paths:
       - application/json
       description: DeleteDoctorService - Api for delete doctorServices
       parameters:
-      - in: query
-        name: field
-        type: string
-      - in: query
-        name: value
+      - description: id
+        in: query
+        name: id
+        required: true
         type: string
       produces:
       - application/json
@@ -1986,11 +1985,10 @@ paths:
       - application/json
       description: DeleteDoctorTimes - Api for delete Doctor time
       parameters:
-      - in: query
-        name: field
-        type: string
-      - in: query
-        name: value
+      - description: id
+        in: query
+        name: id
+        required: true
         type: string
       produces:
       - application/json
@@ -2115,11 +2113,10 @@ paths:
       - application/json
       description: GetDoctorTimes - Api for get doctor time
       parameters:
-      - in: query
-        name: field
-        type: string
-      - in: query
-        name: value
+      - description: id
+        in: query
+        name: id
+        required: true
         type: string
       produces:
       - application/json
@@ -2145,11 +2142,10 @@ paths:
       - application/json
       description: DeleteDoctorWorkingHours - Api for delete doctor_working_hours
       parameters:
-      - in: query
-        name: field
-        type: string
-      - in: query
-        name: value
+      - description: id
+        in: query
+        name: id
+        required: true
         type: string
       produces:
       - application/json
@@ -2308,10 +2304,6 @@ paths:
         name: id
         required: true
         type: string
-      - description: is_active
-        in: query
-        name: is_active
-        type: string
       produces:
       - application/json
       responses:
@@ -2417,11 +2409,10 @@ paths:
       - application/json
       description: DeletePatient - Api for delete patient
       parameters:
-      - in: query
-        name: field
-        type: string
-      - in: query
-        name: value
+      - description: id
+        in: query
+        name: id
+        required: true
         type: string
       produces:
       - application/json
@@ -2552,11 +2543,10 @@ paths:
       - application/json
       description: GetPatient - Api for get patient
       parameters:
-      - in: query
-        name: field
-        type: string
-      - in: query
-        name: value
+      - description: id
+        in: query
+        name: id
+        required: true
         type: string
       produces:
       - application/json
@@ -2616,11 +2606,10 @@ paths:
       - application/json
       description: DeleteReasons - Api for delete reasons
       parameters:
-      - in: query
-        name: field
-        type: string
-      - in: query
-        name: value
+      - description: id
+        in: query
+        name: id
+        required: true
         type: string
       produces:
       - application/json
@@ -2831,11 +2820,10 @@ paths:
       - application/json
       description: DeleteSpecialization - Api for delete specialization
       parameters:
-      - in: query
-        name: field
-        type: string
-      - in: query
-        name: value
+      - description: id
+        in: query
+        name: id
+        required: true
         type: string
       produces:
       - application/json
@@ -3022,14 +3010,9 @@ paths:
       - application/json
       description: Api for DeleteUser
       parameters:
-      - description: Field
+      - description: id
         in: query
-        name: Field
-        required: true
-        type: string
-      - description: Value
-        in: query
-        name: Value
+        name: id
         required: true
         type: string
       produces:

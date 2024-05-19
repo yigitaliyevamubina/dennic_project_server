@@ -117,6 +117,7 @@ func (r *BookingAppointments) GetAppointment(ctx context.Context, req *pb.Appoin
 		DepartmentId:    res.DepartmentId,
 		DoctorId:        res.DoctorId,
 		PatientId:       res.PatientId,
+		DoctorServiceId: res.ServiceId,
 		AppointmentDate: res.AppointmentDate.String(),
 		AppointmentTime: res.AppointmentTime.Format("15:04:05"),
 		Duration:        res.Duration,
@@ -156,6 +157,7 @@ func (r *BookingAppointments) GetAllAppointment(ctx context.Context, req *pb.Get
 		appointmentRes.DepartmentId = appoint.DepartmentId
 		appointmentRes.DoctorId = appoint.DoctorId
 		appointmentRes.PatientId = appoint.PatientId
+		appointmentRes.DoctorServiceId = appoint.ServiceId
 		appointmentRes.AppointmentDate = appoint.AppointmentDate.String()
 		appointmentRes.AppointmentTime = appoint.AppointmentTime.Format("15:04:05")
 		appointmentRes.Duration = appoint.Duration
@@ -200,6 +202,10 @@ func (r *BookingAppointments) UpdateAppointment(ctx context.Context, req *pb.Upd
 	res, err := r.bookedAppointmentUseCase.UpdateAppointment(ctx, &appointment.UpdateAppointment{
 		Field:           req.Field,
 		Value:           req.Value,
+		DepartmentId:    req.DepartmentId,
+		DoctorId:        req.DoctorId,
+		PatientId:       req.PatientId,
+		ServiceId:       req.DoctorServiceId,
 		AppointmentDate: reqDate,
 		AppointmentTime: reqTime,
 		Duration:        req.Duration,
@@ -219,6 +225,7 @@ func (r *BookingAppointments) UpdateAppointment(ctx context.Context, req *pb.Upd
 		DepartmentId:    res.DepartmentId,
 		DoctorId:        res.DoctorId,
 		PatientId:       res.PatientId,
+		DoctorServiceId: res.ServiceId,
 		AppointmentDate: res.AppointmentDate.String(),
 		AppointmentTime: res.AppointmentTime.Format("15:04:05"),
 		Duration:        res.Duration,
