@@ -6,11 +6,12 @@ import (
 	"dennic_admin_api_gateway/api/models"
 	"dennic_admin_api_gateway/api/models/model_healthcare_service"
 	pb "dennic_admin_api_gateway/genproto/healthcare-service"
+	"net/http"
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/cast"
 	"google.golang.org/protobuf/encoding/protojson"
-	"net/http"
-	"time"
 )
 
 // CreateDoctorWorkingHours ...
@@ -69,19 +70,23 @@ func (h *HandlerV1) CreateDoctorWorkingHours(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param id query string true "id"
+// @Param day_of_week query string false "day_of_week"
 // @Success 200 {object} model_healthcare_service.DoctorWorkingHoursRes
 // @Failure 400 {object} model_common.StandardErrorModel
 // @Failure 500 {object} model_common.StandardErrorModel
 // @Router /v1/doctor-working-hours/get [get]
 func (h *HandlerV1) GetDoctorWorkingHours(c *gin.Context) {
 	id := c.Query("id")
+	dayOfWeek := c.Query("day_of_week")
+
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*time.Duration(h.cfg.Context.Timeout))
 	defer cancel()
 
 	dwh, err := h.serviceManager.HealthcareService().DoctorWorkingHoursService().GetDoctorWorkingHoursById(ctx, &pb.GetReqInt{
-		Field:    "id",
-		Value:    id,
-		IsActive: false,
+		Field:     "id",
+		Value:     id,
+		IsActive:  false,
+		DayOfWeek: dayOfWeek,
 	})
 
 	if e.HandleError(c, err, h.log, http.StatusInternalServerError, "GetDoctorWorkingHours") {
