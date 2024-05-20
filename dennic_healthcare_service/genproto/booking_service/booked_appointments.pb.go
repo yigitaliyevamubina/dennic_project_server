@@ -5,6 +5,7 @@ package booking_service
 
 import (
 	context "context"
+	encoding_binary "encoding/binary"
 	fmt "fmt"
 	proto "github.com/golang/protobuf/proto"
 	grpc "google.golang.org/grpc"
@@ -31,15 +32,19 @@ type Appointment struct {
 	DepartmentId         string   `protobuf:"bytes,2,opt,name=department_id,json=departmentId,proto3" json:"department_id"`
 	DoctorId             string   `protobuf:"bytes,3,opt,name=doctor_id,json=doctorId,proto3" json:"doctor_id"`
 	PatientId            string   `protobuf:"bytes,4,opt,name=patient_id,json=patientId,proto3" json:"patient_id"`
-	AppointmentDate      string   `protobuf:"bytes,5,opt,name=appointment_date,json=appointmentDate,proto3" json:"appointment_date"`
-	AppointmentTime      string   `protobuf:"bytes,6,opt,name=appointment_time,json=appointmentTime,proto3" json:"appointment_time"`
-	Duration             int64    `protobuf:"varint,7,opt,name=duration,proto3" json:"duration"`
-	Key                  string   `protobuf:"bytes,8,opt,name=key,proto3" json:"key"`
-	ExpiresAt            string   `protobuf:"bytes,9,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at"`
-	PatientStatus        bool     `protobuf:"varint,10,opt,name=patient_status,json=patientStatus,proto3" json:"patient_status"`
-	CreatedAt            string   `protobuf:"bytes,11,opt,name=created_at,json=createdAt,proto3" json:"created_at"`
-	UpdatedAt            string   `protobuf:"bytes,12,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at"`
-	DeletedAt            string   `protobuf:"bytes,13,opt,name=deleted_at,json=deletedAt,proto3" json:"deleted_at"`
+	DoctorServiceId      string   `protobuf:"bytes,5,opt,name=doctor_service_id,json=doctorServiceId,proto3" json:"doctor_service_id"`
+	AppointmentDate      string   `protobuf:"bytes,6,opt,name=appointment_date,json=appointmentDate,proto3" json:"appointment_date"`
+	AppointmentTime      string   `protobuf:"bytes,7,opt,name=appointment_time,json=appointmentTime,proto3" json:"appointment_time"`
+	Duration             int64    `protobuf:"varint,8,opt,name=duration,proto3" json:"duration"`
+	Key                  string   `protobuf:"bytes,9,opt,name=key,proto3" json:"key"`
+	ExpiresAt            string   `protobuf:"bytes,10,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at"`
+	PatientProblem       string   `protobuf:"bytes,11,opt,name=patient_problem,json=patientProblem,proto3" json:"patient_problem"`
+	Status               string   `protobuf:"bytes,12,opt,name=status,proto3" json:"status"`
+	PaymentType          string   `protobuf:"bytes,13,opt,name=payment_type,json=paymentType,proto3" json:"payment_type"`
+	PaymentAmount        float32  `protobuf:"fixed32,14,opt,name=payment_amount,json=paymentAmount,proto3" json:"payment_amount"`
+	CreatedAt            string   `protobuf:"bytes,15,opt,name=created_at,json=createdAt,proto3" json:"created_at"`
+	UpdatedAt            string   `protobuf:"bytes,16,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at"`
+	DeletedAt            string   `protobuf:"bytes,17,opt,name=deleted_at,json=deletedAt,proto3" json:"deleted_at"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -106,6 +111,13 @@ func (m *Appointment) GetPatientId() string {
 	return ""
 }
 
+func (m *Appointment) GetDoctorServiceId() string {
+	if m != nil {
+		return m.DoctorServiceId
+	}
+	return ""
+}
+
 func (m *Appointment) GetAppointmentDate() string {
 	if m != nil {
 		return m.AppointmentDate
@@ -141,11 +153,32 @@ func (m *Appointment) GetExpiresAt() string {
 	return ""
 }
 
-func (m *Appointment) GetPatientStatus() bool {
+func (m *Appointment) GetPatientProblem() string {
 	if m != nil {
-		return m.PatientStatus
+		return m.PatientProblem
 	}
-	return false
+	return ""
+}
+
+func (m *Appointment) GetStatus() string {
+	if m != nil {
+		return m.Status
+	}
+	return ""
+}
+
+func (m *Appointment) GetPaymentType() string {
+	if m != nil {
+		return m.PaymentType
+	}
+	return ""
+}
+
+func (m *Appointment) GetPaymentAmount() float32 {
+	if m != nil {
+		return m.PaymentAmount
+	}
+	return 0
 }
 
 func (m *Appointment) GetCreatedAt() string {
@@ -225,15 +258,19 @@ func (m *Appointments) GetAppointments() []*Appointment {
 }
 
 type CreateAppointmentReq struct {
-	DepartmentId         string   `protobuf:"bytes,2,opt,name=department_id,json=departmentId,proto3" json:"department_id"`
-	DoctorId             string   `protobuf:"bytes,3,opt,name=doctor_id,json=doctorId,proto3" json:"doctor_id"`
-	PatientId            string   `protobuf:"bytes,4,opt,name=patient_id,json=patientId,proto3" json:"patient_id"`
+	DepartmentId         string   `protobuf:"bytes,1,opt,name=department_id,json=departmentId,proto3" json:"department_id"`
+	DoctorId             string   `protobuf:"bytes,2,opt,name=doctor_id,json=doctorId,proto3" json:"doctor_id"`
+	PatientId            string   `protobuf:"bytes,3,opt,name=patient_id,json=patientId,proto3" json:"patient_id"`
+	DoctorServiceId      string   `protobuf:"bytes,4,opt,name=doctor_service_id,json=doctorServiceId,proto3" json:"doctor_service_id"`
 	AppointmentDate      string   `protobuf:"bytes,5,opt,name=appointment_date,json=appointmentDate,proto3" json:"appointment_date"`
 	AppointmentTime      string   `protobuf:"bytes,6,opt,name=appointment_time,json=appointmentTime,proto3" json:"appointment_time"`
 	Duration             int64    `protobuf:"varint,7,opt,name=duration,proto3" json:"duration"`
 	Key                  string   `protobuf:"bytes,8,opt,name=key,proto3" json:"key"`
 	ExpiresAt            string   `protobuf:"bytes,9,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at"`
-	PatientStatus        bool     `protobuf:"varint,10,opt,name=patient_status,json=patientStatus,proto3" json:"patient_status"`
+	PatientProblem       string   `protobuf:"bytes,10,opt,name=patient_problem,json=patientProblem,proto3" json:"patient_problem"`
+	Status               string   `protobuf:"bytes,11,opt,name=status,proto3" json:"status"`
+	PaymentType          string   `protobuf:"bytes,12,opt,name=payment_type,json=paymentType,proto3" json:"payment_type"`
+	PaymentAmount        float32  `protobuf:"fixed32,13,opt,name=payment_amount,json=paymentAmount,proto3" json:"payment_amount"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -293,6 +330,13 @@ func (m *CreateAppointmentReq) GetPatientId() string {
 	return ""
 }
 
+func (m *CreateAppointmentReq) GetDoctorServiceId() string {
+	if m != nil {
+		return m.DoctorServiceId
+	}
+	return ""
+}
+
 func (m *CreateAppointmentReq) GetAppointmentDate() string {
 	if m != nil {
 		return m.AppointmentDate
@@ -328,22 +372,50 @@ func (m *CreateAppointmentReq) GetExpiresAt() string {
 	return ""
 }
 
-func (m *CreateAppointmentReq) GetPatientStatus() bool {
+func (m *CreateAppointmentReq) GetPatientProblem() string {
 	if m != nil {
-		return m.PatientStatus
+		return m.PatientProblem
 	}
-	return false
+	return ""
+}
+
+func (m *CreateAppointmentReq) GetStatus() string {
+	if m != nil {
+		return m.Status
+	}
+	return ""
+}
+
+func (m *CreateAppointmentReq) GetPaymentType() string {
+	if m != nil {
+		return m.PaymentType
+	}
+	return ""
+}
+
+func (m *CreateAppointmentReq) GetPaymentAmount() float32 {
+	if m != nil {
+		return m.PaymentAmount
+	}
+	return 0
 }
 
 type UpdateAppointmentReq struct {
-	AppointmentDate      string   `protobuf:"bytes,2,opt,name=appointment_date,json=appointmentDate,proto3" json:"appointment_date"`
-	AppointmentTime      string   `protobuf:"bytes,3,opt,name=appointment_time,json=appointmentTime,proto3" json:"appointment_time"`
-	Duration             int64    `protobuf:"varint,4,opt,name=duration,proto3" json:"duration"`
-	Key                  string   `protobuf:"bytes,5,opt,name=key,proto3" json:"key"`
-	ExpiresAt            string   `protobuf:"bytes,6,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at"`
-	PatientStatus        bool     `protobuf:"varint,7,opt,name=patient_status,json=patientStatus,proto3" json:"patient_status"`
-	Field                string   `protobuf:"bytes,8,opt,name=field,proto3" json:"field"`
-	Value                string   `protobuf:"bytes,9,opt,name=value,proto3" json:"value"`
+	DepartmentId         string   `protobuf:"bytes,1,opt,name=department_id,json=departmentId,proto3" json:"department_id"`
+	DoctorId             string   `protobuf:"bytes,2,opt,name=doctor_id,json=doctorId,proto3" json:"doctor_id"`
+	PatientId            string   `protobuf:"bytes,3,opt,name=patient_id,json=patientId,proto3" json:"patient_id"`
+	DoctorServiceId      string   `protobuf:"bytes,4,opt,name=doctor_service_id,json=doctorServiceId,proto3" json:"doctor_service_id"`
+	AppointmentDate      string   `protobuf:"bytes,5,opt,name=appointment_date,json=appointmentDate,proto3" json:"appointment_date"`
+	AppointmentTime      string   `protobuf:"bytes,6,opt,name=appointment_time,json=appointmentTime,proto3" json:"appointment_time"`
+	Duration             int64    `protobuf:"varint,7,opt,name=duration,proto3" json:"duration"`
+	Key                  string   `protobuf:"bytes,8,opt,name=key,proto3" json:"key"`
+	ExpiresAt            string   `protobuf:"bytes,9,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at"`
+	PatientProblem       string   `protobuf:"bytes,10,opt,name=patient_problem,json=patientProblem,proto3" json:"patient_problem"`
+	Status               string   `protobuf:"bytes,11,opt,name=status,proto3" json:"status"`
+	PaymentType          string   `protobuf:"bytes,12,opt,name=payment_type,json=paymentType,proto3" json:"payment_type"`
+	PaymentAmount        float32  `protobuf:"fixed32,13,opt,name=payment_amount,json=paymentAmount,proto3" json:"payment_amount"`
+	Field                string   `protobuf:"bytes,14,opt,name=field,proto3" json:"field"`
+	Value                string   `protobuf:"bytes,15,opt,name=value,proto3" json:"value"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -382,6 +454,34 @@ func (m *UpdateAppointmentReq) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_UpdateAppointmentReq proto.InternalMessageInfo
 
+func (m *UpdateAppointmentReq) GetDepartmentId() string {
+	if m != nil {
+		return m.DepartmentId
+	}
+	return ""
+}
+
+func (m *UpdateAppointmentReq) GetDoctorId() string {
+	if m != nil {
+		return m.DoctorId
+	}
+	return ""
+}
+
+func (m *UpdateAppointmentReq) GetPatientId() string {
+	if m != nil {
+		return m.PatientId
+	}
+	return ""
+}
+
+func (m *UpdateAppointmentReq) GetDoctorServiceId() string {
+	if m != nil {
+		return m.DoctorServiceId
+	}
+	return ""
+}
+
 func (m *UpdateAppointmentReq) GetAppointmentDate() string {
 	if m != nil {
 		return m.AppointmentDate
@@ -417,11 +517,32 @@ func (m *UpdateAppointmentReq) GetExpiresAt() string {
 	return ""
 }
 
-func (m *UpdateAppointmentReq) GetPatientStatus() bool {
+func (m *UpdateAppointmentReq) GetPatientProblem() string {
 	if m != nil {
-		return m.PatientStatus
+		return m.PatientProblem
 	}
-	return false
+	return ""
+}
+
+func (m *UpdateAppointmentReq) GetStatus() string {
+	if m != nil {
+		return m.Status
+	}
+	return ""
+}
+
+func (m *UpdateAppointmentReq) GetPaymentType() string {
+	if m != nil {
+		return m.PaymentType
+	}
+	return ""
+}
+
+func (m *UpdateAppointmentReq) GetPaymentAmount() float32 {
+	if m != nil {
+		return m.PaymentAmount
+	}
+	return 0
 }
 
 func (m *UpdateAppointmentReq) GetField() string {
@@ -650,47 +771,53 @@ func init() {
 }
 
 var fileDescriptor_8ede99e18a76dc86 = []byte{
-	// 636 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xec, 0x55, 0x5d, 0x6e, 0xd3, 0x40,
-	0x10, 0xc6, 0x76, 0x92, 0x3a, 0xd3, 0xf4, 0x6f, 0x15, 0xc0, 0x2d, 0x34, 0x8a, 0x8c, 0x8a, 0xd2,
-	0x97, 0x22, 0xca, 0x05, 0x70, 0xa9, 0x40, 0x7d, 0x75, 0x01, 0x01, 0x2f, 0xd6, 0xc6, 0xbb, 0x2d,
-	0xab, 0x3a, 0xb1, 0xb1, 0x37, 0x11, 0xb9, 0x03, 0x07, 0xe0, 0x02, 0x3d, 0x08, 0x6f, 0x3c, 0x72,
-	0x04, 0x14, 0x2e, 0xc0, 0x11, 0xd0, 0xfe, 0xb4, 0xdd, 0xc6, 0x6e, 0x52, 0x24, 0x1e, 0x79, 0xf3,
-	0x7c, 0xf3, 0xcd, 0x64, 0xe6, 0x9b, 0x99, 0x0d, 0xec, 0xf6, 0xd3, 0xf4, 0x8c, 0x0d, 0x4f, 0xa3,
-	0x82, 0xe6, 0x63, 0x16, 0xd3, 0x27, 0xc2, 0xa6, 0x24, 0xc2, 0x59, 0x96, 0xb2, 0x21, 0x1f, 0xd0,
-	0x21, 0x2f, 0xf6, 0xb2, 0x3c, 0xe5, 0x29, 0x5a, 0x9b, 0xa1, 0xfa, 0xe7, 0x0e, 0x2c, 0x07, 0x57,
-	0x3c, 0xb4, 0x0a, 0x36, 0x23, 0x9e, 0xd5, 0xb5, 0x7a, 0x4e, 0x68, 0x33, 0x82, 0x1e, 0xc1, 0x0a,
-	0xa1, 0x19, 0xce, 0xa5, 0x37, 0x62, 0xc4, 0xb3, 0xbb, 0x56, 0xaf, 0x19, 0xb6, 0xae, 0xc0, 0x23,
-	0x82, 0x1e, 0x40, 0x93, 0xa4, 0x31, 0x4f, 0x73, 0x41, 0x70, 0x24, 0xc1, 0x55, 0xc0, 0x11, 0x41,
-	0xdb, 0x00, 0x19, 0xe6, 0x4c, 0x87, 0xd7, 0xa4, 0xb7, 0xa9, 0x91, 0x23, 0x82, 0x76, 0x61, 0xdd,
-	0xa8, 0x33, 0x22, 0x98, 0x53, 0xaf, 0x2e, 0x49, 0x6b, 0x06, 0x7e, 0x88, 0x39, 0x9d, 0xa5, 0x72,
-	0x36, 0xa0, 0x5e, 0xa3, 0x44, 0x7d, 0xcd, 0x06, 0x14, 0x6d, 0x81, 0x4b, 0x46, 0x39, 0xe6, 0x2c,
-	0x1d, 0x7a, 0x4b, 0xb2, 0x99, 0x4b, 0x1b, 0xad, 0x83, 0x73, 0x46, 0x27, 0x9e, 0x2b, 0x23, 0xc5,
-	0xa7, 0x28, 0x91, 0x7e, 0xce, 0x58, 0x4e, 0x8b, 0x08, 0x73, 0xaf, 0xa9, 0x4a, 0xd4, 0x48, 0xc0,
-	0xd1, 0x0e, 0xac, 0x5e, 0x74, 0x50, 0x70, 0xcc, 0x47, 0x85, 0x07, 0x5d, 0xab, 0xe7, 0x86, 0x2b,
-	0x1a, 0x3d, 0x96, 0xa0, 0xc8, 0x12, 0xe7, 0x14, 0x73, 0xa1, 0x3c, 0xf7, 0x96, 0x55, 0x16, 0x8d,
-	0x04, 0x5c, 0xb8, 0x47, 0x19, 0xb9, 0x70, 0xb7, 0x94, 0x5b, 0x23, 0xca, 0x4d, 0x68, 0x42, 0xb5,
-	0x7b, 0x45, 0xb9, 0x35, 0x12, 0x70, 0xff, 0x04, 0x5a, 0xc6, 0x98, 0x0a, 0xd4, 0x86, 0x7a, 0x9c,
-	0x8e, 0x86, 0x5c, 0x8f, 0x4a, 0x19, 0xe8, 0x39, 0xb4, 0xcc, 0xa1, 0x7b, 0x76, 0xd7, 0xe9, 0x2d,
-	0xef, 0x3f, 0xdc, 0x9b, 0x99, 0xfa, 0x9e, 0x91, 0x2a, 0xbc, 0x16, 0xe1, 0x7f, 0xb3, 0xa1, 0xfd,
-	0x42, 0xd6, 0x6c, 0x72, 0xe8, 0xa7, 0xff, 0x8b, 0x70, 0xeb, 0x45, 0xf0, 0xbf, 0xd8, 0xd0, 0x7e,
-	0x23, 0x07, 0x3b, 0xa3, 0x61, 0x55, 0x8b, 0xf6, 0xed, 0x5b, 0x74, 0x16, 0xb7, 0x58, 0xab, 0x6e,
-	0xb1, 0x7e, 0x53, 0x8b, 0x8d, 0xc5, 0x2d, 0x2e, 0x55, 0xed, 0x7a, 0x1b, 0xea, 0x27, 0x8c, 0x26,
-	0x44, 0x8b, 0xa7, 0x0c, 0x81, 0x8e, 0x71, 0x32, 0xa2, 0x5a, 0x39, 0x65, 0xf8, 0x31, 0x78, 0x86,
-	0x0e, 0x2f, 0x05, 0xf3, 0xad, 0x70, 0x08, 0x45, 0x2e, 0xf3, 0x58, 0x95, 0x79, 0x6c, 0x23, 0x8f,
-	0x58, 0x2e, 0x56, 0x44, 0x38, 0xe6, 0x6c, 0xac, 0xb4, 0x70, 0x43, 0x97, 0x15, 0x81, 0xb4, 0xfd,
-	0xa7, 0x70, 0xff, 0x50, 0x1e, 0x8b, 0xf1, 0x53, 0xba, 0xd6, 0x7b, 0xd0, 0xd0, 0xad, 0x58, 0x32,
-	0x48, 0x5b, 0xfe, 0xb9, 0x05, 0x77, 0x5f, 0x51, 0x1e, 0x24, 0x89, 0x79, 0x59, 0xff, 0xb2, 0x2a,
-	0x84, 0xa0, 0x96, 0xe1, 0x53, 0x2a, 0xc7, 0x52, 0x0b, 0xe5, 0xb7, 0x48, 0x93, 0xb0, 0x01, 0xe3,
-	0x72, 0x28, 0xb5, 0x50, 0x19, 0x68, 0x13, 0xdc, 0x34, 0x27, 0x34, 0x8f, 0xfa, 0x13, 0x3d, 0x94,
-	0x25, 0x69, 0x1f, 0x4c, 0xf6, 0x7f, 0x3b, 0xb0, 0x79, 0x20, 0x5f, 0x74, 0xb3, 0xce, 0x63, 0x75,
-	0xca, 0xe8, 0x1d, 0x6c, 0x94, 0xee, 0x15, 0xed, 0x94, 0x2e, 0xbe, 0xea, 0xa6, 0xb7, 0xe6, 0x3e,
-	0x0c, 0xe8, 0x3d, 0xac, 0x0a, 0x79, 0x0c, 0x64, 0x77, 0x1e, 0xff, 0xda, 0x60, 0x17, 0xa4, 0xfe,
-	0x00, 0x1b, 0x25, 0xe5, 0xd1, 0xe3, 0x52, 0x48, 0xe5, 0x74, 0xb6, 0xb6, 0xe7, 0xa5, 0x2e, 0x84,
-	0x20, 0xa5, 0xe3, 0xab, 0x10, 0xa4, 0xea, 0x40, 0x17, 0x54, 0xfd, 0x11, 0x36, 0x4a, 0x3b, 0xf6,
-	0x37, 0x9a, 0xf4, 0x4a, 0xd4, 0x1b, 0x56, 0xf6, 0x60, 0xfd, 0xfb, 0xb4, 0x63, 0xfd, 0x98, 0x76,
-	0xac, 0x9f, 0xd3, 0x8e, 0xf5, 0xf5, 0x57, 0xe7, 0x4e, 0xbf, 0x21, 0xff, 0xbf, 0x9f, 0xfd, 0x09,
-	0x00, 0x00, 0xff, 0xff, 0x68, 0x64, 0x39, 0x71, 0xec, 0x07, 0x00, 0x00,
+	// 727 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xec, 0x96, 0x5d, 0x6e, 0xd3, 0x40,
+	0x10, 0xc7, 0x71, 0x9c, 0xa6, 0xc9, 0xe4, 0x7b, 0x55, 0x60, 0x5b, 0x68, 0x14, 0x8c, 0x0a, 0x29,
+	0x0f, 0x45, 0x94, 0x0b, 0xe0, 0x52, 0x81, 0xf2, 0x86, 0xdc, 0x82, 0x80, 0x17, 0x6b, 0x93, 0xdd,
+	0x96, 0x55, 0x9d, 0xd8, 0xd8, 0x9b, 0x8a, 0xdc, 0x84, 0x0b, 0x70, 0x04, 0xee, 0xc0, 0x23, 0xdc,
+	0x00, 0x95, 0x0b, 0x70, 0x01, 0x24, 0xb4, 0x1f, 0x6d, 0xdd, 0xda, 0x4d, 0x82, 0xc4, 0x13, 0xe2,
+	0xcd, 0xf3, 0x9f, 0xff, 0x4e, 0x67, 0x77, 0x7e, 0x9d, 0x16, 0x36, 0x07, 0x61, 0x78, 0xc4, 0xc7,
+	0x87, 0x7e, 0xc2, 0xe2, 0x63, 0x3e, 0x64, 0x0f, 0x65, 0xcc, 0xa8, 0x4f, 0xa2, 0x28, 0xe4, 0x63,
+	0x31, 0x62, 0x63, 0x91, 0x6c, 0x45, 0x71, 0x28, 0x42, 0xd4, 0xbc, 0x64, 0x75, 0x3e, 0x17, 0xa1,
+	0xea, 0x9e, 0xfb, 0x50, 0x03, 0x0a, 0x9c, 0x62, 0xab, 0x6b, 0xf5, 0x6c, 0xaf, 0xc0, 0x29, 0xba,
+	0x0b, 0x75, 0xca, 0x22, 0x12, 0xab, 0xac, 0xcf, 0x29, 0x2e, 0x74, 0xad, 0x5e, 0xc5, 0xab, 0x9d,
+	0x8b, 0x7d, 0x8a, 0x6e, 0x41, 0x85, 0x86, 0x43, 0x11, 0xc6, 0xd2, 0x60, 0x2b, 0x43, 0x59, 0x0b,
+	0x7d, 0x8a, 0xd6, 0x01, 0x22, 0x22, 0xb8, 0x39, 0x5e, 0x54, 0xd9, 0x8a, 0x51, 0xfa, 0x14, 0x3d,
+	0x80, 0xb6, 0x39, 0x6b, 0x5a, 0x92, 0xae, 0x25, 0xe5, 0x6a, 0xea, 0xc4, 0x9e, 0xd6, 0xfb, 0x14,
+	0x6d, 0x42, 0x2b, 0x75, 0x27, 0x9f, 0x12, 0xc1, 0x70, 0x49, 0x5b, 0x53, 0xfa, 0x2e, 0x11, 0xec,
+	0xb2, 0x55, 0xf0, 0x11, 0xc3, 0xcb, 0x19, 0xeb, 0x3e, 0x1f, 0x31, 0xb4, 0x06, 0x65, 0x3a, 0x89,
+	0x89, 0xe0, 0xe1, 0x18, 0x97, 0xd5, 0xc5, 0xcf, 0x62, 0xd4, 0x02, 0xfb, 0x88, 0x4d, 0x71, 0x45,
+	0x9d, 0x94, 0x9f, 0xf2, 0x3a, 0xec, 0x43, 0xc4, 0x63, 0x96, 0xf8, 0x44, 0x60, 0xd0, 0xd7, 0x31,
+	0x8a, 0x2b, 0xd0, 0x7d, 0x68, 0x9e, 0xde, 0x36, 0x8a, 0xc3, 0x41, 0xc0, 0x46, 0xb8, 0xaa, 0x3c,
+	0x0d, 0x23, 0xbf, 0xd0, 0x2a, 0xba, 0x01, 0xa5, 0x44, 0x10, 0x31, 0x49, 0x70, 0x4d, 0xe5, 0x4d,
+	0x84, 0xee, 0x40, 0x2d, 0x22, 0x53, 0xdd, 0xf4, 0x34, 0x62, 0xb8, 0xae, 0xb2, 0x55, 0xa3, 0xed,
+	0x4f, 0x23, 0x86, 0x36, 0xa0, 0x71, 0x6a, 0x21, 0xa3, 0x70, 0x32, 0x16, 0xb8, 0xd1, 0xb5, 0x7a,
+	0x05, 0xaf, 0x6e, 0x54, 0x57, 0x89, 0xb2, 0xd3, 0x61, 0xcc, 0x88, 0x90, 0x24, 0x08, 0xdc, 0xd4,
+	0x9d, 0x1a, 0xc5, 0x55, 0xe9, 0x49, 0x44, 0x4f, 0xd3, 0x2d, 0x9d, 0x36, 0x8a, 0x4e, 0x53, 0x16,
+	0x30, 0x93, 0x6e, 0xeb, 0xb4, 0x51, 0x5c, 0xe1, 0x1c, 0x40, 0x2d, 0x85, 0x4d, 0x82, 0x56, 0x60,
+	0x69, 0xa8, 0x5a, 0xd1, 0xe8, 0xe8, 0x00, 0x3d, 0x81, 0x5a, 0x1a, 0x42, 0x5c, 0xe8, 0xda, 0xbd,
+	0xea, 0xf6, 0xed, 0xad, 0x4b, 0x14, 0x6e, 0xa5, 0x4a, 0x79, 0x17, 0x4e, 0x38, 0xdf, 0x6c, 0x58,
+	0x79, 0xaa, 0x7a, 0x4e, 0x7b, 0xd8, 0xfb, 0x2c, 0x98, 0xd6, 0x3c, 0x30, 0x0b, 0x33, 0xc1, 0xb4,
+	0x17, 0x02, 0xb3, 0xb8, 0x38, 0x98, 0x4b, 0x8b, 0x83, 0x59, 0x9a, 0x0f, 0xe6, 0x72, 0x3e, 0x98,
+	0xe5, 0xab, 0xc0, 0xac, 0x2c, 0x00, 0x26, 0xcc, 0x01, 0xb3, 0x3a, 0x13, 0xcc, 0xda, 0x22, 0x60,
+	0xd6, 0x73, 0xc0, 0x74, 0x7e, 0xd9, 0xb0, 0xf2, 0x52, 0x81, 0xf6, 0x7f, 0xa6, 0xff, 0xc8, 0x4c,
+	0xe5, 0xef, 0xff, 0x01, 0x67, 0x01, 0x55, 0xab, 0xa8, 0xe2, 0xe9, 0x40, 0xaa, 0xc7, 0x24, 0x98,
+	0x30, 0xb3, 0x7d, 0x74, 0xe0, 0x0c, 0x01, 0xa7, 0x06, 0xff, 0x4c, 0x3a, 0x5f, 0xc9, 0x84, 0x44,
+	0xe0, 0xac, 0x8e, 0x95, 0x5b, 0xa7, 0x90, 0xaa, 0x23, 0x49, 0xe0, 0x89, 0x4f, 0x86, 0x82, 0x1f,
+	0x33, 0x35, 0xeb, 0xb2, 0x57, 0xe6, 0x89, 0xab, 0x62, 0xe7, 0x11, 0xdc, 0xdc, 0x55, 0xdb, 0x2a,
+	0xf5, 0xa3, 0xf6, 0xf4, 0xad, 0xcf, 0x5f, 0xc3, 0x52, 0x87, 0x4c, 0xe4, 0x7c, 0xb2, 0xe0, 0xfa,
+	0x73, 0x26, 0xdc, 0x20, 0x48, 0xaf, 0xb6, 0xbf, 0xd9, 0x15, 0x42, 0x50, 0x8c, 0xc8, 0x21, 0x53,
+	0xcc, 0x15, 0x3d, 0xf5, 0x2d, 0xcb, 0x04, 0x7c, 0xc4, 0x85, 0xa2, 0xab, 0xe8, 0xe9, 0x00, 0xad,
+	0x42, 0x39, 0x8c, 0x29, 0x8b, 0xfd, 0xc1, 0xd4, 0xb0, 0xb4, 0xac, 0xe2, 0x9d, 0xe9, 0xf6, 0x4f,
+	0x1b, 0x56, 0x77, 0xd4, 0x9f, 0xf8, 0x74, 0x9f, 0x86, 0x5c, 0xf4, 0x1a, 0xda, 0x99, 0x85, 0x89,
+	0x36, 0x32, 0x2b, 0x37, 0x6f, 0xa9, 0xae, 0xcd, 0xdc, 0xcc, 0xe8, 0x0d, 0x34, 0xe4, 0xf3, 0xa4,
+	0x94, 0xcd, 0x59, 0xfe, 0x0b, 0x83, 0x9d, 0x53, 0xfa, 0x2d, 0xb4, 0x33, 0x2f, 0x8f, 0xee, 0x65,
+	0x8e, 0xe4, 0x4e, 0x67, 0x6d, 0x7d, 0x56, 0xe9, 0x44, 0x3e, 0x48, 0x66, 0xdb, 0xe4, 0x3c, 0x48,
+	0xde, 0x46, 0x9a, 0xd3, 0xf5, 0x3b, 0x68, 0x67, 0x18, 0xfb, 0x93, 0x37, 0xe9, 0x65, 0xac, 0x57,
+	0x20, 0xbb, 0xd3, 0xfa, 0x72, 0xd2, 0xb1, 0xbe, 0x9e, 0x74, 0xac, 0xef, 0x27, 0x1d, 0xeb, 0xe3,
+	0x8f, 0xce, 0xb5, 0x41, 0x49, 0xfd, 0x43, 0xf7, 0xf8, 0x77, 0x00, 0x00, 0x00, 0xff, 0xff, 0xd2,
+	0xfd, 0x04, 0x06, 0xfd, 0x09, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -948,62 +1075,90 @@ func (m *Appointment) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		copy(dAtA[i:], m.DeletedAt)
 		i = encodeVarintBookedAppointments(dAtA, i, uint64(len(m.DeletedAt)))
 		i--
-		dAtA[i] = 0x6a
+		dAtA[i] = 0x1
+		i--
+		dAtA[i] = 0x8a
 	}
 	if len(m.UpdatedAt) > 0 {
 		i -= len(m.UpdatedAt)
 		copy(dAtA[i:], m.UpdatedAt)
 		i = encodeVarintBookedAppointments(dAtA, i, uint64(len(m.UpdatedAt)))
 		i--
-		dAtA[i] = 0x62
+		dAtA[i] = 0x1
+		i--
+		dAtA[i] = 0x82
 	}
 	if len(m.CreatedAt) > 0 {
 		i -= len(m.CreatedAt)
 		copy(dAtA[i:], m.CreatedAt)
 		i = encodeVarintBookedAppointments(dAtA, i, uint64(len(m.CreatedAt)))
 		i--
-		dAtA[i] = 0x5a
+		dAtA[i] = 0x7a
 	}
-	if m.PatientStatus {
+	if m.PaymentAmount != 0 {
+		i -= 4
+		encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(math.Float32bits(float32(m.PaymentAmount))))
 		i--
-		if m.PatientStatus {
-			dAtA[i] = 1
-		} else {
-			dAtA[i] = 0
-		}
+		dAtA[i] = 0x75
+	}
+	if len(m.PaymentType) > 0 {
+		i -= len(m.PaymentType)
+		copy(dAtA[i:], m.PaymentType)
+		i = encodeVarintBookedAppointments(dAtA, i, uint64(len(m.PaymentType)))
 		i--
-		dAtA[i] = 0x50
+		dAtA[i] = 0x6a
+	}
+	if len(m.Status) > 0 {
+		i -= len(m.Status)
+		copy(dAtA[i:], m.Status)
+		i = encodeVarintBookedAppointments(dAtA, i, uint64(len(m.Status)))
+		i--
+		dAtA[i] = 0x62
+	}
+	if len(m.PatientProblem) > 0 {
+		i -= len(m.PatientProblem)
+		copy(dAtA[i:], m.PatientProblem)
+		i = encodeVarintBookedAppointments(dAtA, i, uint64(len(m.PatientProblem)))
+		i--
+		dAtA[i] = 0x5a
 	}
 	if len(m.ExpiresAt) > 0 {
 		i -= len(m.ExpiresAt)
 		copy(dAtA[i:], m.ExpiresAt)
 		i = encodeVarintBookedAppointments(dAtA, i, uint64(len(m.ExpiresAt)))
 		i--
-		dAtA[i] = 0x4a
+		dAtA[i] = 0x52
 	}
 	if len(m.Key) > 0 {
 		i -= len(m.Key)
 		copy(dAtA[i:], m.Key)
 		i = encodeVarintBookedAppointments(dAtA, i, uint64(len(m.Key)))
 		i--
-		dAtA[i] = 0x42
+		dAtA[i] = 0x4a
 	}
 	if m.Duration != 0 {
 		i = encodeVarintBookedAppointments(dAtA, i, uint64(m.Duration))
 		i--
-		dAtA[i] = 0x38
+		dAtA[i] = 0x40
 	}
 	if len(m.AppointmentTime) > 0 {
 		i -= len(m.AppointmentTime)
 		copy(dAtA[i:], m.AppointmentTime)
 		i = encodeVarintBookedAppointments(dAtA, i, uint64(len(m.AppointmentTime)))
 		i--
-		dAtA[i] = 0x32
+		dAtA[i] = 0x3a
 	}
 	if len(m.AppointmentDate) > 0 {
 		i -= len(m.AppointmentDate)
 		copy(dAtA[i:], m.AppointmentDate)
 		i = encodeVarintBookedAppointments(dAtA, i, uint64(len(m.AppointmentDate)))
+		i--
+		dAtA[i] = 0x32
+	}
+	if len(m.DoctorServiceId) > 0 {
+		i -= len(m.DoctorServiceId)
+		copy(dAtA[i:], m.DoctorServiceId)
+		i = encodeVarintBookedAppointments(dAtA, i, uint64(len(m.DoctorServiceId)))
 		i--
 		dAtA[i] = 0x2a
 	}
@@ -1106,15 +1261,32 @@ func (m *CreateAppointmentReq) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i -= len(m.XXX_unrecognized)
 		copy(dAtA[i:], m.XXX_unrecognized)
 	}
-	if m.PatientStatus {
+	if m.PaymentAmount != 0 {
+		i -= 4
+		encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(math.Float32bits(float32(m.PaymentAmount))))
 		i--
-		if m.PatientStatus {
-			dAtA[i] = 1
-		} else {
-			dAtA[i] = 0
-		}
+		dAtA[i] = 0x6d
+	}
+	if len(m.PaymentType) > 0 {
+		i -= len(m.PaymentType)
+		copy(dAtA[i:], m.PaymentType)
+		i = encodeVarintBookedAppointments(dAtA, i, uint64(len(m.PaymentType)))
 		i--
-		dAtA[i] = 0x50
+		dAtA[i] = 0x62
+	}
+	if len(m.Status) > 0 {
+		i -= len(m.Status)
+		copy(dAtA[i:], m.Status)
+		i = encodeVarintBookedAppointments(dAtA, i, uint64(len(m.Status)))
+		i--
+		dAtA[i] = 0x5a
+	}
+	if len(m.PatientProblem) > 0 {
+		i -= len(m.PatientProblem)
+		copy(dAtA[i:], m.PatientProblem)
+		i = encodeVarintBookedAppointments(dAtA, i, uint64(len(m.PatientProblem)))
+		i--
+		dAtA[i] = 0x52
 	}
 	if len(m.ExpiresAt) > 0 {
 		i -= len(m.ExpiresAt)
@@ -1149,26 +1321,33 @@ func (m *CreateAppointmentReq) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0x2a
 	}
+	if len(m.DoctorServiceId) > 0 {
+		i -= len(m.DoctorServiceId)
+		copy(dAtA[i:], m.DoctorServiceId)
+		i = encodeVarintBookedAppointments(dAtA, i, uint64(len(m.DoctorServiceId)))
+		i--
+		dAtA[i] = 0x22
+	}
 	if len(m.PatientId) > 0 {
 		i -= len(m.PatientId)
 		copy(dAtA[i:], m.PatientId)
 		i = encodeVarintBookedAppointments(dAtA, i, uint64(len(m.PatientId)))
 		i--
-		dAtA[i] = 0x22
+		dAtA[i] = 0x1a
 	}
 	if len(m.DoctorId) > 0 {
 		i -= len(m.DoctorId)
 		copy(dAtA[i:], m.DoctorId)
 		i = encodeVarintBookedAppointments(dAtA, i, uint64(len(m.DoctorId)))
 		i--
-		dAtA[i] = 0x1a
+		dAtA[i] = 0x12
 	}
 	if len(m.DepartmentId) > 0 {
 		i -= len(m.DepartmentId)
 		copy(dAtA[i:], m.DepartmentId)
 		i = encodeVarintBookedAppointments(dAtA, i, uint64(len(m.DepartmentId)))
 		i--
-		dAtA[i] = 0x12
+		dAtA[i] = 0xa
 	}
 	return len(dAtA) - i, nil
 }
@@ -1202,57 +1381,102 @@ func (m *UpdateAppointmentReq) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		copy(dAtA[i:], m.Value)
 		i = encodeVarintBookedAppointments(dAtA, i, uint64(len(m.Value)))
 		i--
-		dAtA[i] = 0x4a
+		dAtA[i] = 0x7a
 	}
 	if len(m.Field) > 0 {
 		i -= len(m.Field)
 		copy(dAtA[i:], m.Field)
 		i = encodeVarintBookedAppointments(dAtA, i, uint64(len(m.Field)))
 		i--
-		dAtA[i] = 0x42
+		dAtA[i] = 0x72
 	}
-	if m.PatientStatus {
+	if m.PaymentAmount != 0 {
+		i -= 4
+		encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(math.Float32bits(float32(m.PaymentAmount))))
 		i--
-		if m.PatientStatus {
-			dAtA[i] = 1
-		} else {
-			dAtA[i] = 0
-		}
+		dAtA[i] = 0x6d
+	}
+	if len(m.PaymentType) > 0 {
+		i -= len(m.PaymentType)
+		copy(dAtA[i:], m.PaymentType)
+		i = encodeVarintBookedAppointments(dAtA, i, uint64(len(m.PaymentType)))
 		i--
-		dAtA[i] = 0x38
+		dAtA[i] = 0x62
+	}
+	if len(m.Status) > 0 {
+		i -= len(m.Status)
+		copy(dAtA[i:], m.Status)
+		i = encodeVarintBookedAppointments(dAtA, i, uint64(len(m.Status)))
+		i--
+		dAtA[i] = 0x5a
+	}
+	if len(m.PatientProblem) > 0 {
+		i -= len(m.PatientProblem)
+		copy(dAtA[i:], m.PatientProblem)
+		i = encodeVarintBookedAppointments(dAtA, i, uint64(len(m.PatientProblem)))
+		i--
+		dAtA[i] = 0x52
 	}
 	if len(m.ExpiresAt) > 0 {
 		i -= len(m.ExpiresAt)
 		copy(dAtA[i:], m.ExpiresAt)
 		i = encodeVarintBookedAppointments(dAtA, i, uint64(len(m.ExpiresAt)))
 		i--
-		dAtA[i] = 0x32
+		dAtA[i] = 0x4a
 	}
 	if len(m.Key) > 0 {
 		i -= len(m.Key)
 		copy(dAtA[i:], m.Key)
 		i = encodeVarintBookedAppointments(dAtA, i, uint64(len(m.Key)))
 		i--
-		dAtA[i] = 0x2a
+		dAtA[i] = 0x42
 	}
 	if m.Duration != 0 {
 		i = encodeVarintBookedAppointments(dAtA, i, uint64(m.Duration))
 		i--
-		dAtA[i] = 0x20
+		dAtA[i] = 0x38
 	}
 	if len(m.AppointmentTime) > 0 {
 		i -= len(m.AppointmentTime)
 		copy(dAtA[i:], m.AppointmentTime)
 		i = encodeVarintBookedAppointments(dAtA, i, uint64(len(m.AppointmentTime)))
 		i--
-		dAtA[i] = 0x1a
+		dAtA[i] = 0x32
 	}
 	if len(m.AppointmentDate) > 0 {
 		i -= len(m.AppointmentDate)
 		copy(dAtA[i:], m.AppointmentDate)
 		i = encodeVarintBookedAppointments(dAtA, i, uint64(len(m.AppointmentDate)))
 		i--
+		dAtA[i] = 0x2a
+	}
+	if len(m.DoctorServiceId) > 0 {
+		i -= len(m.DoctorServiceId)
+		copy(dAtA[i:], m.DoctorServiceId)
+		i = encodeVarintBookedAppointments(dAtA, i, uint64(len(m.DoctorServiceId)))
+		i--
+		dAtA[i] = 0x22
+	}
+	if len(m.PatientId) > 0 {
+		i -= len(m.PatientId)
+		copy(dAtA[i:], m.PatientId)
+		i = encodeVarintBookedAppointments(dAtA, i, uint64(len(m.PatientId)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if len(m.DoctorId) > 0 {
+		i -= len(m.DoctorId)
+		copy(dAtA[i:], m.DoctorId)
+		i = encodeVarintBookedAppointments(dAtA, i, uint64(len(m.DoctorId)))
+		i--
 		dAtA[i] = 0x12
+	}
+	if len(m.DepartmentId) > 0 {
+		i -= len(m.DepartmentId)
+		copy(dAtA[i:], m.DepartmentId)
+		i = encodeVarintBookedAppointments(dAtA, i, uint64(len(m.DepartmentId)))
+		i--
+		dAtA[i] = 0xa
 	}
 	return len(dAtA) - i, nil
 }
@@ -1445,6 +1669,10 @@ func (m *Appointment) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovBookedAppointments(uint64(l))
 	}
+	l = len(m.DoctorServiceId)
+	if l > 0 {
+		n += 1 + l + sovBookedAppointments(uint64(l))
+	}
 	l = len(m.AppointmentDate)
 	if l > 0 {
 		n += 1 + l + sovBookedAppointments(uint64(l))
@@ -1464,8 +1692,20 @@ func (m *Appointment) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovBookedAppointments(uint64(l))
 	}
-	if m.PatientStatus {
-		n += 2
+	l = len(m.PatientProblem)
+	if l > 0 {
+		n += 1 + l + sovBookedAppointments(uint64(l))
+	}
+	l = len(m.Status)
+	if l > 0 {
+		n += 1 + l + sovBookedAppointments(uint64(l))
+	}
+	l = len(m.PaymentType)
+	if l > 0 {
+		n += 1 + l + sovBookedAppointments(uint64(l))
+	}
+	if m.PaymentAmount != 0 {
+		n += 5
 	}
 	l = len(m.CreatedAt)
 	if l > 0 {
@@ -1473,11 +1713,11 @@ func (m *Appointment) Size() (n int) {
 	}
 	l = len(m.UpdatedAt)
 	if l > 0 {
-		n += 1 + l + sovBookedAppointments(uint64(l))
+		n += 2 + l + sovBookedAppointments(uint64(l))
 	}
 	l = len(m.DeletedAt)
 	if l > 0 {
-		n += 1 + l + sovBookedAppointments(uint64(l))
+		n += 2 + l + sovBookedAppointments(uint64(l))
 	}
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
@@ -1524,6 +1764,10 @@ func (m *CreateAppointmentReq) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovBookedAppointments(uint64(l))
 	}
+	l = len(m.DoctorServiceId)
+	if l > 0 {
+		n += 1 + l + sovBookedAppointments(uint64(l))
+	}
 	l = len(m.AppointmentDate)
 	if l > 0 {
 		n += 1 + l + sovBookedAppointments(uint64(l))
@@ -1543,8 +1787,20 @@ func (m *CreateAppointmentReq) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovBookedAppointments(uint64(l))
 	}
-	if m.PatientStatus {
-		n += 2
+	l = len(m.PatientProblem)
+	if l > 0 {
+		n += 1 + l + sovBookedAppointments(uint64(l))
+	}
+	l = len(m.Status)
+	if l > 0 {
+		n += 1 + l + sovBookedAppointments(uint64(l))
+	}
+	l = len(m.PaymentType)
+	if l > 0 {
+		n += 1 + l + sovBookedAppointments(uint64(l))
+	}
+	if m.PaymentAmount != 0 {
+		n += 5
 	}
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
@@ -1558,6 +1814,22 @@ func (m *UpdateAppointmentReq) Size() (n int) {
 	}
 	var l int
 	_ = l
+	l = len(m.DepartmentId)
+	if l > 0 {
+		n += 1 + l + sovBookedAppointments(uint64(l))
+	}
+	l = len(m.DoctorId)
+	if l > 0 {
+		n += 1 + l + sovBookedAppointments(uint64(l))
+	}
+	l = len(m.PatientId)
+	if l > 0 {
+		n += 1 + l + sovBookedAppointments(uint64(l))
+	}
+	l = len(m.DoctorServiceId)
+	if l > 0 {
+		n += 1 + l + sovBookedAppointments(uint64(l))
+	}
 	l = len(m.AppointmentDate)
 	if l > 0 {
 		n += 1 + l + sovBookedAppointments(uint64(l))
@@ -1577,8 +1849,20 @@ func (m *UpdateAppointmentReq) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovBookedAppointments(uint64(l))
 	}
-	if m.PatientStatus {
-		n += 2
+	l = len(m.PatientProblem)
+	if l > 0 {
+		n += 1 + l + sovBookedAppointments(uint64(l))
+	}
+	l = len(m.Status)
+	if l > 0 {
+		n += 1 + l + sovBookedAppointments(uint64(l))
+	}
+	l = len(m.PaymentType)
+	if l > 0 {
+		n += 1 + l + sovBookedAppointments(uint64(l))
+	}
+	if m.PaymentAmount != 0 {
+		n += 5
 	}
 	l = len(m.Field)
 	if l > 0 {
@@ -1817,6 +2101,38 @@ func (m *Appointment) Unmarshal(dAtA []byte) error {
 			iNdEx = postIndex
 		case 5:
 			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field DoctorServiceId", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowBookedAppointments
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthBookedAppointments
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthBookedAppointments
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.DoctorServiceId = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 6:
+			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field AppointmentDate", wireType)
 			}
 			var stringLen uint64
@@ -1847,7 +2163,7 @@ func (m *Appointment) Unmarshal(dAtA []byte) error {
 			}
 			m.AppointmentDate = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 6:
+		case 7:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field AppointmentTime", wireType)
 			}
@@ -1879,7 +2195,7 @@ func (m *Appointment) Unmarshal(dAtA []byte) error {
 			}
 			m.AppointmentTime = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 7:
+		case 8:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Duration", wireType)
 			}
@@ -1898,7 +2214,7 @@ func (m *Appointment) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-		case 8:
+		case 9:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Key", wireType)
 			}
@@ -1930,7 +2246,7 @@ func (m *Appointment) Unmarshal(dAtA []byte) error {
 			}
 			m.Key = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 9:
+		case 10:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field ExpiresAt", wireType)
 			}
@@ -1962,11 +2278,11 @@ func (m *Appointment) Unmarshal(dAtA []byte) error {
 			}
 			m.ExpiresAt = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 10:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PatientStatus", wireType)
+		case 11:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PatientProblem", wireType)
 			}
-			var v int
+			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowBookedAppointments
@@ -1976,13 +2292,100 @@ func (m *Appointment) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				v |= int(b&0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			m.PatientStatus = bool(v != 0)
-		case 11:
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthBookedAppointments
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthBookedAppointments
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.PatientProblem = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 12:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Status", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowBookedAppointments
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthBookedAppointments
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthBookedAppointments
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Status = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 13:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PaymentType", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowBookedAppointments
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthBookedAppointments
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthBookedAppointments
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.PaymentType = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 14:
+			if wireType != 5 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PaymentAmount", wireType)
+			}
+			var v uint32
+			if (iNdEx + 4) > l {
+				return io.ErrUnexpectedEOF
+			}
+			v = uint32(encoding_binary.LittleEndian.Uint32(dAtA[iNdEx:]))
+			iNdEx += 4
+			m.PaymentAmount = float32(math.Float32frombits(v))
+		case 15:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field CreatedAt", wireType)
 			}
@@ -2014,7 +2417,7 @@ func (m *Appointment) Unmarshal(dAtA []byte) error {
 			}
 			m.CreatedAt = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 12:
+		case 16:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field UpdatedAt", wireType)
 			}
@@ -2046,7 +2449,7 @@ func (m *Appointment) Unmarshal(dAtA []byte) error {
 			}
 			m.UpdatedAt = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 13:
+		case 17:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field DeletedAt", wireType)
 			}
@@ -2233,7 +2636,7 @@ func (m *CreateAppointmentReq) Unmarshal(dAtA []byte) error {
 			return fmt.Errorf("proto: CreateAppointmentReq: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
-		case 2:
+		case 1:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field DepartmentId", wireType)
 			}
@@ -2265,7 +2668,7 @@ func (m *CreateAppointmentReq) Unmarshal(dAtA []byte) error {
 			}
 			m.DepartmentId = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 3:
+		case 2:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field DoctorId", wireType)
 			}
@@ -2297,7 +2700,7 @@ func (m *CreateAppointmentReq) Unmarshal(dAtA []byte) error {
 			}
 			m.DoctorId = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 4:
+		case 3:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field PatientId", wireType)
 			}
@@ -2328,6 +2731,38 @@ func (m *CreateAppointmentReq) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			m.PatientId = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field DoctorServiceId", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowBookedAppointments
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthBookedAppointments
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthBookedAppointments
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.DoctorServiceId = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 5:
 			if wireType != 2 {
@@ -2477,10 +2912,10 @@ func (m *CreateAppointmentReq) Unmarshal(dAtA []byte) error {
 			m.ExpiresAt = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 10:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PatientStatus", wireType)
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PatientProblem", wireType)
 			}
-			var v int
+			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowBookedAppointments
@@ -2490,12 +2925,99 @@ func (m *CreateAppointmentReq) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				v |= int(b&0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			m.PatientStatus = bool(v != 0)
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthBookedAppointments
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthBookedAppointments
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.PatientProblem = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 11:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Status", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowBookedAppointments
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthBookedAppointments
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthBookedAppointments
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Status = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 12:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PaymentType", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowBookedAppointments
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthBookedAppointments
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthBookedAppointments
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.PaymentType = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 13:
+			if wireType != 5 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PaymentAmount", wireType)
+			}
+			var v uint32
+			if (iNdEx + 4) > l {
+				return io.ErrUnexpectedEOF
+			}
+			v = uint32(encoding_binary.LittleEndian.Uint32(dAtA[iNdEx:]))
+			iNdEx += 4
+			m.PaymentAmount = float32(math.Float32frombits(v))
 		default:
 			iNdEx = preIndex
 			skippy, err := skipBookedAppointments(dAtA[iNdEx:])
@@ -2547,7 +3069,135 @@ func (m *UpdateAppointmentReq) Unmarshal(dAtA []byte) error {
 			return fmt.Errorf("proto: UpdateAppointmentReq: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field DepartmentId", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowBookedAppointments
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthBookedAppointments
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthBookedAppointments
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.DepartmentId = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
 		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field DoctorId", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowBookedAppointments
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthBookedAppointments
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthBookedAppointments
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.DoctorId = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PatientId", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowBookedAppointments
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthBookedAppointments
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthBookedAppointments
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.PatientId = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field DoctorServiceId", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowBookedAppointments
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthBookedAppointments
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthBookedAppointments
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.DoctorServiceId = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 5:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field AppointmentDate", wireType)
 			}
@@ -2579,7 +3229,7 @@ func (m *UpdateAppointmentReq) Unmarshal(dAtA []byte) error {
 			}
 			m.AppointmentDate = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 3:
+		case 6:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field AppointmentTime", wireType)
 			}
@@ -2611,7 +3261,7 @@ func (m *UpdateAppointmentReq) Unmarshal(dAtA []byte) error {
 			}
 			m.AppointmentTime = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 4:
+		case 7:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Duration", wireType)
 			}
@@ -2630,7 +3280,7 @@ func (m *UpdateAppointmentReq) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-		case 5:
+		case 8:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Key", wireType)
 			}
@@ -2662,7 +3312,7 @@ func (m *UpdateAppointmentReq) Unmarshal(dAtA []byte) error {
 			}
 			m.Key = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 6:
+		case 9:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field ExpiresAt", wireType)
 			}
@@ -2694,11 +3344,11 @@ func (m *UpdateAppointmentReq) Unmarshal(dAtA []byte) error {
 			}
 			m.ExpiresAt = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 7:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PatientStatus", wireType)
+		case 10:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PatientProblem", wireType)
 			}
-			var v int
+			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowBookedAppointments
@@ -2708,13 +3358,100 @@ func (m *UpdateAppointmentReq) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				v |= int(b&0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			m.PatientStatus = bool(v != 0)
-		case 8:
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthBookedAppointments
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthBookedAppointments
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.PatientProblem = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 11:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Status", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowBookedAppointments
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthBookedAppointments
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthBookedAppointments
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Status = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 12:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PaymentType", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowBookedAppointments
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthBookedAppointments
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthBookedAppointments
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.PaymentType = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 13:
+			if wireType != 5 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PaymentAmount", wireType)
+			}
+			var v uint32
+			if (iNdEx + 4) > l {
+				return io.ErrUnexpectedEOF
+			}
+			v = uint32(encoding_binary.LittleEndian.Uint32(dAtA[iNdEx:]))
+			iNdEx += 4
+			m.PaymentAmount = float32(math.Float32frombits(v))
+		case 14:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Field", wireType)
 			}
@@ -2746,7 +3483,7 @@ func (m *UpdateAppointmentReq) Unmarshal(dAtA []byte) error {
 			}
 			m.Field = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 9:
+		case 15:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Value", wireType)
 			}
