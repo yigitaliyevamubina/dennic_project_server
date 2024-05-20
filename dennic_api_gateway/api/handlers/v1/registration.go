@@ -91,7 +91,7 @@ func (h *HandlerV1) Register(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, model_user_service.MessageRes{
-		Message: "Code has been sent to you phone number, please check.",
+		Message: "Code has been sent to your phone number, please check.",
 	})
 }
 
@@ -292,7 +292,7 @@ func (h *HandlerV1) ForgetPassword(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, model_user_service.MessageRes{
-		Message: "Code has been sent to you phone number, please check.",
+		Message: "Code has been sent to your phone number, please check.",
 	})
 }
 
@@ -632,6 +632,6 @@ func (h *HandlerV1) SenOtpCode(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, model_user_service.MessageRes{
-		Message: "Code has been sent to you phone number, please check.",
+		Message: "Code has been sent to your phone number, please check.",
 	})
 }
