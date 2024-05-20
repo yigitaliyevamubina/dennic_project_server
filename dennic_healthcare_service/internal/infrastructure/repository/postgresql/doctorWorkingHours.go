@@ -7,8 +7,9 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"go.opentelemetry.io/otel/attribute"
 	"time"
+
+	"go.opentelemetry.io/otel/attribute"
 )
 
 const (
@@ -83,7 +84,7 @@ func (p Dwh) CreateDoctorWorkingHours(ctx context.Context, in *entity.DoctorWork
 	return in, nil
 }
 
-func (p Dwh) GetDoctorWorkingHoursById(ctx context.Context, in *entity.GetReqStr) (*entity.DoctorWorkingHours, error) {
+func (p Dwh) GetDoctorWorkingHoursById(ctx context.Context, in *entity.GetRequest) (*entity.DoctorWorkingHours, error) {
 
 	ctx, span := otlp.Start(ctx, serviceNameDoctorWorkingHours, serviceNameDoctorWorkingHoursRepoPrefix+"Get")
 	span.SetAttributes(attribute.Key(in.Field).String(in.Value))
@@ -96,6 +97,11 @@ func (p Dwh) GetDoctorWorkingHoursById(ctx context.Context, in *entity.GetReqStr
 		queryBuilder = queryBuilder.Where("deleted_at IS NULL")
 	}
 	queryBuilder = queryBuilder.Where(p.db.Sq.Equal(in.Field, in.Value))
+
+	if in.DayOfWeek != "" {
+		queryBuilder = queryBuilder.Where(p.db.Sq.Equal("day_of_week", in.DayOfWeek))
+	}
+
 	query, args, err := queryBuilder.ToSql()
 	if err != nil {
 		return nil, err

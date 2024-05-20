@@ -6,9 +6,10 @@ import (
 	"Healthcare_Evrone/internal/pkg/otlp"
 	"Healthcare_Evrone/internal/usecase"
 	"context"
+	"time"
+
 	"go.opentelemetry.io/otel/attribute"
 	"go.uber.org/zap"
-	"time"
 )
 
 type doctorWorkingHoursServiceRPC struct {
@@ -60,10 +61,11 @@ func (r doctorWorkingHoursServiceRPC) GetDoctorWorkingHoursById(ctx context.Cont
 	ctx, span := otlp.Start(ctx, serviceNameDoctorWorkingHoursDelivery, serviceNameDoctorWorkingHoursDeliveryRepoPrefix+"Get")
 	span.SetAttributes(attribute.Key("GetDoctorWorkingHoursById").String(string(in.Value)))
 	defer span.End()
-	dwh, err := r.doctorWorkingHours.GetDoctorWorkingHoursById(ctx, &entity.GetReqStr{
-		Field:    in.Field,
-		Value:    in.Value,
-		IsActive: in.IsActive,
+	dwh, err := r.doctorWorkingHours.GetDoctorWorkingHoursById(ctx, &entity.GetRequest{
+		Field:     in.Field,
+		Value:     in.Value,
+		IsActive:  in.IsActive,
+		DayOfWeek: in.DayOfWeek,
 	})
 	if err != nil {
 		return nil, err

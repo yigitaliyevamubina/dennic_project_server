@@ -113,7 +113,7 @@ func (s *DoctorWorkingHoursTestSuite) TestDoctorWorkingHoursCrud() {
 	s.Suite.Equal(respDoctorService.StartTime, dwh.StartTime)
 	s.Suite.Equal(respDoctorService.StartTime, dwh.StartTime)
 
-	getDoctorWorkingHours, err := s.Repository.GetDoctorWorkingHoursById(ctx, &entity.GetReqStr{
+	getDoctorWorkingHours, err := s.Repository.GetDoctorWorkingHoursById(ctx, &entity.GetRequest{
 		Field:    "id",
 		Value:    cast.ToString(respDoctorService.Id),
 		IsActive: false,

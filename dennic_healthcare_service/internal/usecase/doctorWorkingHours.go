@@ -16,7 +16,7 @@ const (
 
 type DoctorWorkingHoursUseCase interface {
 	CreateDoctorWorkingHours(ctx context.Context, in *entity.DoctorWorkingHours) (*entity.DoctorWorkingHours, error)
-	GetDoctorWorkingHoursById(ctx context.Context, in *entity.GetReqStr) (*entity.DoctorWorkingHours, error)
+	GetDoctorWorkingHoursById(ctx context.Context, in *entity.GetRequest) (*entity.DoctorWorkingHours, error)
 	GetAllDoctorWorkingHours(ctx context.Context, in *entity.GetAll) (*entity.ListDoctorWorkingHours, error)
 	UpdateDoctorWorkingHours(ctx context.Context, in *entity.DoctorWorkingHours) (*entity.DoctorWorkingHours, error)
 	DeleteDoctorWorkingHours(ctx context.Context, in *entity.GetReqStr) (bool, error)
@@ -45,7 +45,7 @@ func (d dwhService) CreateDoctorWorkingHours(ctx context.Context, in *entity.Doc
 	return d.repo.CreateDoctorWorkingHours(ctx, in)
 }
 
-func (d dwhService) GetDoctorWorkingHoursById(ctx context.Context, in *entity.GetReqStr) (*entity.DoctorWorkingHours, error) {
+func (d dwhService) GetDoctorWorkingHoursById(ctx context.Context, in *entity.GetRequest) (*entity.DoctorWorkingHours, error) {
 	ctx, cancel := context.WithTimeout(ctx, d.ctxTimeout)
 	defer cancel()
 
