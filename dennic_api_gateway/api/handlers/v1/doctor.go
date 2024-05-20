@@ -5,6 +5,7 @@ import (
 	e "dennic_admin_api_gateway/api/handlers/regtool"
 	"dennic_admin_api_gateway/api/models"
 	"dennic_admin_api_gateway/api/models/model_healthcare_service"
+	"dennic_admin_api_gateway/genproto/booking_service"
 	pb "dennic_admin_api_gateway/genproto/healthcare-service"
 	"net/http"
 	"time"
@@ -127,6 +128,18 @@ func (h *HandlerV1) GetDoctor(c *gin.Context) {
 		})
 	}
 
+	appointments, err := h.serviceManager.BookingService().BookedAppointment().GetFilteredAppointments(ctx, &booking_service.GetFilteredRequest{
+		Field:    "doctor_id",
+		Value:    id,
+		IsActive: false,
+		Page:     uint64(1),
+		Limit:    uint64(10),
+		Status:   "attended",
+	})
+	if e.HandleError(c, err, h.log, http.StatusInternalServerError, "GetDoctor -> GetFilteredAppointments") {
+		return
+	}
+
 	c.JSON(http.StatusOK, model_healthcare_service.DoctorAndDoctorHours{
 		Id:              doctor.Id,
 		Order:           doctor.Order,
@@ -155,6 +168,7 @@ func (h *HandlerV1) GetDoctor(c *gin.Context) {
 		UpdatedAt:       e.UpdateTimeFilter(doctor.UpdatedAt),
 		DeletedAt:       e.UpdateTimeFilter(doctor.DeletedAt),
 		Specializations: doctorSpec,
+		PatientCount:    appointments.Count,
 	})
 }
 
