@@ -9,6 +9,7 @@ service BookedAppointmentsService {
   rpc GetAllAppointment(GetAllAppointmentsReq) returns (Appointments);
   rpc UpdateAppointment(UpdateAppointmentReq) returns (Appointment);
   rpc DeleteAppointment(AppointmentFieldValueReq) returns (DeleteAppointmentStatus);
+  rpc GetFilteredAppointments(GetFilteredRequest) returns (Appointments);
 }
 
 message Appointment {
@@ -87,4 +88,14 @@ message GetAllAppointmentsReq {
   uint64 page = 4;
   uint64 limit = 5;
   string order_by = 6;
+}
+
+message GetFilteredRequest {
+  string field = 1;
+  string value = 2;
+  bool is_active = 3;
+  uint64 page = 4;
+  uint64 limit = 5;
+  string order_by = 6;
+  string status = 7;
 }

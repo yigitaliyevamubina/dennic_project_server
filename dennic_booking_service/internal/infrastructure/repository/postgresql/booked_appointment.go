@@ -280,6 +280,109 @@ func (r *BookingAppointment) GetAllAppointment(
 	return &response, nil
 }
 
+func (r *BookingAppointment) GetFilteredAppointments(
+	ctx context.Context,
+	req *appointment.GetFilteredRequest,
+) (*appointment.AppointmentsType, error) {
+	ctx, span := otlp.Start(ctx, serviceNameAppointment, spanNameAppointmentRepo+"List")
+	defer span.End()
+
+	var (
+		response appointment.AppointmentsType
+		upAt     sql.NullTime
+		delAt    sql.NullTime
+		count    int64
+	)
+
+	toSql := r.db.Sq.Builder.
+		Select(tableColums()).
+		From(tableNameAppointment)
+
+	countBuilder := r.db.Sq.Builder.Select("count(*)").From(tableNameAppointment)
+
+	if req.Page >= 1 && req.Limit >= 1 {
+		toSql = toSql.
+			Limit(req.Limit).
+			Offset(req.Limit * (req.Page - 1))
+	}
+
+	if req.Field != "" && req.Value != "" {
+		toSql = toSql.Where(r.db.Sq.ILike(req.Field, req.Value+"%"))
+		countBuilder = countBuilder.Where(r.db.Sq.ILike(req.Field, req.Value+"%"))
+	}
+
+	if req.Status != "" {
+		toSql = toSql.Where(r.db.Sq.Equal("status", req.Value))
+		countBuilder = countBuilder.Where(r.db.Sq.Equal("status", req.Value))
+	}
+
+	if req.OrderBy != "" {
+		toSql = toSql.OrderBy(req.OrderBy)
+	}
+	if !req.DeleteStatus {
+		countBuilder = countBuilder.Where(r.db.Sq.Equal("deleted_at", nil))
+		toSql = toSql.Where(r.db.Sq.Equal("deleted_at", nil))
+	}
+
+	toSqls, args, err := toSql.ToSql()
+	if err != nil {
+		return nil, err
+	}
+
+	queryCount, _, err := countBuilder.ToSql()
+	if err != nil {
+		return nil, err
+	}
+
+	err = r.db.QueryRow(ctx, queryCount).Scan(&count)
+	if err != nil {
+		return nil, err
+	}
+
+	rows, err := r.db.Query(ctx, toSqls, args...)
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		var res appointment.Appointment
+		if err := rows.Scan(
+			&res.Id,
+			&res.DepartmentId,
+			&res.DoctorId,
+			&res.PatientId,
+			&res.ServiceId,
+			&res.AppointmentDate,
+			&res.AppointmentTime,
+			&res.Duration,
+			&res.Key,
+			&res.ExpiresAt,
+			&res.PatientProblem,
+			&res.Status,
+			&res.PaymentType,
+			&res.PaymentAmount,
+			&res.CreatedAt,
+			&upAt,
+			&delAt,
+		); err != nil {
+			return nil, err
+		}
+
+		if upAt.Valid {
+			res.UpdatedAt = upAt.Time
+		}
+
+		if delAt.Valid {
+			res.DeletedAt = delAt.Time
+		}
+
+		response.Appointments = append(response.Appointments, &res)
+	}
+
+	response.Count = count
+	return &response, nil
+}
+
 func (r *BookingAppointment) UpdateAppointment(
 	ctx context.Context,
 	req *appointment.UpdateAppointment,

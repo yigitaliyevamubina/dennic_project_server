@@ -17,11 +17,7 @@ const (
 
 type BookingDoctorNotes struct {
 	logger                          *zap.Logger
-	bookedAppointmentUseCase        usecase.BookedAppointments
-	bookedPatientUseCase            usecase.Patient
 	bookedDoctorNotesUseCase        usecase.DoctorNotes
-	bookedArchiveUseCase            usecase.Archive
-	bookedDoctorAvailabilityUseCase usecase.DoctorAvailability
 }
 
 func BookingDoctorNotesNewRPC(

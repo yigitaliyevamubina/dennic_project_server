@@ -5,14 +5,12 @@ import (
 	_ "booking_service/internal/delivery/grpc"
 	appointment "booking_service/internal/entity/booked_appointments"
 	"booking_service/internal/pkg/otlp"
-	_ "booking_service/internal/pkg/otlp"
 	"booking_service/internal/usecase"
 	"context"
 	"time"
 
 	"github.com/rickb777/date"
 	"go.opentelemetry.io/otel/attribute"
-	_ "go.opentelemetry.io/otel/attribute"
 	"go.uber.org/zap"
 )
 
@@ -146,6 +144,52 @@ func (r *BookingAppointments) GetAllAppointment(ctx context.Context, req *pb.Get
 		Field:        req.Field,
 		Value:        req.Value,
 		OrderBy:      req.OrderBy,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	for _, appoint := range allAppointment.Appointments {
+		var appointmentRes pb.Appointment
+		appointmentRes.Id = appoint.Id
+		appointmentRes.DepartmentId = appoint.DepartmentId
+		appointmentRes.DoctorId = appoint.DoctorId
+		appointmentRes.PatientId = appoint.PatientId
+		appointmentRes.DoctorServiceId = appoint.ServiceId
+		appointmentRes.AppointmentDate = appoint.AppointmentDate.String()
+		appointmentRes.AppointmentTime = appoint.AppointmentTime.Format("15:04:05")
+		appointmentRes.Duration = appoint.Duration
+		appointmentRes.Key = appoint.Key
+		appointmentRes.PatientProblem = appoint.PatientProblem
+		appointmentRes.Status = appoint.Status
+		appointmentRes.PaymentType = appoint.PaymentType
+		appointmentRes.PaymentAmount = float32(appoint.PaymentAmount)
+		appointmentRes.ExpiresAt = appoint.ExpiresAt.Format("2006-01-02 15:04:05")
+		appointmentRes.CreatedAt = appoint.CreatedAt.Format("2006-01-02 15:04:05")
+		appointmentRes.UpdatedAt = appoint.UpdatedAt.Format("2006-01-02 15:04:05")
+		appointmentRes.DeletedAt = appoint.DeletedAt.Format("2006-01-02 15:04:05")
+
+		appointmentsRes.Appointments = append(appointmentsRes.Appointments, &appointmentRes)
+	}
+	appointmentsRes.Count = allAppointment.Count
+
+	return &appointmentsRes, nil
+}
+
+func (r *BookingAppointments) GetFilteredAppointments(ctx context.Context, req *pb.GetFilteredRequest) (*pb.Appointments, error) {
+	ctx, span := otlp.Start(ctx, serviceNameAppointments, spanNameAppointmentsService+"Filtered List")
+	defer span.End()
+
+	var appointmentsRes pb.Appointments
+
+	allAppointment, err := r.bookedAppointmentUseCase.GetFilteredAppointments(ctx, &appointment.GetFilteredRequest{
+		Page:         req.Page,
+		Limit:        req.Limit,
+		DeleteStatus: req.IsActive,
+		Field:        req.Field,
+		Value:        req.Value,
+		OrderBy:      req.OrderBy,
+		Status:       req.Status,
 	})
 	if err != nil {
 		return nil, err

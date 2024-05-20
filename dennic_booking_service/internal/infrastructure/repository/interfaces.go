@@ -28,6 +28,7 @@ type (
 		CreateAppointment(ctx context.Context, req *appointment.CreateAppointment) (*appointment.Appointment, error)
 		GetAppointment(ctx context.Context, req *appointment.FieldValueReq) (*appointment.Appointment, error)
 		GetAllAppointment(ctx context.Context, req *appointment.GetAllAppointment) (*appointment.AppointmentsType, error)
+		GetFilteredAppointments(ctx context.Context, req *appointment.GetFilteredRequest) (*appointment.AppointmentsType, error)
 		UpdateAppointment(ctx context.Context, req *appointment.UpdateAppointment) (*appointment.Appointment, error)
 		DeleteAppointment(ctx context.Context, req *appointment.FieldValueReq) (*appointment.StatusRes, error)
 	}

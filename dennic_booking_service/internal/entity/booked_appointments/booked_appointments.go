@@ -74,6 +74,16 @@ type GetAllAppointment struct {
 	OrderBy      string
 }
 
+type GetFilteredRequest struct {
+	Page         uint64
+	Limit        uint64
+	DeleteStatus bool
+	Field        string
+	Value        string
+	OrderBy      string
+	Status       string
+}
+
 type FieldValueReq struct {
 	Field        string
 	Value        string

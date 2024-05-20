@@ -57,6 +57,17 @@ func (r *BookedAppointmentsUseCase) GetAllAppointment(ctx context.Context, req *
 	return r.repo.GetAllAppointment(ctx, req)
 }
 
+func (r *BookedAppointmentsUseCase) GetFilteredAppointments(ctx context.Context, req *appointment.GetFilteredRequest) (*appointment.AppointmentsType, error) {
+	ctx, cancel := context.WithTimeout(ctx, r.ctxTimeout)
+	defer cancel()
+
+	ctx, span := otlp.Start(ctx, serviceNameAppointments, spanNameAppointments+"List")
+	span.End()
+
+	return r.repo.GetFilteredAppointments(ctx, req)
+}
+
+
 func (r *BookedAppointmentsUseCase) UpdateAppointment(ctx context.Context, req *appointment.UpdateAppointment) (*appointment.Appointment, error) {
 	ctx, cancel := context.WithTimeout(ctx, r.ctxTimeout)
 	defer cancel()
