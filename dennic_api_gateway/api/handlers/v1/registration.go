@@ -184,7 +184,7 @@ func (h *HandlerV1) Verify(c *gin.Context) {
 		return
 	}
 
-	_, err = h.serviceManager.UserService().UserService().Create(ctx, &pb.User{
+	request := &pb.User{
 		Id:           user.Id,
 		FirstName:    user.FirstName,
 		LastName:     user.LastName,
@@ -193,7 +193,15 @@ func (h *HandlerV1) Verify(c *gin.Context) {
 		Password:     user.Password,
 		Gender:       user.Gender,
 		RefreshToken: refresh,
-	})
+	}
+
+	if request.Gender == "female" {
+		request.ImageUrl = "https://minio.dennic.uz/user/846b4a20-6a61-45cf-b01c-3fb935f061f5.png"
+	} else {
+		request.ImageUrl = "https://minio.dennic.uz/user/37367083-4e1d-47c5-84dd-2fdb57d067e2.png"
+	}
+
+	_, err = h.serviceManager.UserService().UserService().Create(ctx, request)
 
 	if e.HandleError(c, err, h.log, http.StatusInternalServerError, SERVICE_ERROR) {
 		return
@@ -266,7 +274,7 @@ func (h *HandlerV1) ForgetPassword(c *gin.Context) {
 		return
 	}
 
-	codeRed, err := h.redis.Client.Get(ctx, body.PhoneNumber).Result()
+	codeRed, _ := h.redis.Client.Get(ctx, body.PhoneNumber).Result()
 
 	if codeRed != "" {
 		err = errors.New(CODE_EXPIRATION_NOT_OVER)
@@ -601,7 +609,7 @@ func (h *HandlerV1) SenOtpCode(c *gin.Context) {
 		return
 	}
 
-	codeRed, err := h.redis.Client.Get(ctx, body.PhoneNumber).Result()
+	codeRed, _ := h.redis.Client.Get(ctx, body.PhoneNumber).Result()
 	if codeRed != "" {
 		err = errors.New(CODE_EXPIRATION_NOT_OVER)
 		if e.HandleError(c, err, h.log, http.StatusBadRequest, CODE_EXPIRATION_NOT_OVER) {
