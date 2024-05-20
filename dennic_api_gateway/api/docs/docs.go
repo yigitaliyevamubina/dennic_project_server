@@ -1993,6 +1993,12 @@ const docTemplate = `{
                         "name": "id",
                         "in": "query",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "day_of_week",
+                        "name": "day_of_week",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -3927,8 +3933,8 @@ const docTemplate = `{
                 "order": {
                     "type": "integer"
                 },
-                "password": {
-                    "type": "string"
+                "patient_count": {
+                    "type": "integer"
                 },
                 "phone_number": {
                     "type": "string"
@@ -4082,9 +4088,6 @@ const docTemplate = `{
                 },
                 "order": {
                     "type": "integer"
-                },
-                "password": {
-                    "type": "string"
                 },
                 "phone_number": {
                     "type": "string"
