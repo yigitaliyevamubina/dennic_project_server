@@ -15,6 +15,7 @@ message GetReqInt{
   string field = 1;
   string value = 2;
   bool is_active = 3;
+  string day_of_week = 4;
 }
 
 message DelReqInt{
